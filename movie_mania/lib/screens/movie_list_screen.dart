@@ -6,7 +6,7 @@ import 'package:movie_mania/widgets/movie_item.dart';
 
 class MovieListScreen extends StatefulWidget {
   final int genreId;
-  const MovieListScreen({super.key, required this.genreId});
+  const MovieListScreen({super.key, required this.genreId,});
 
   @override
   State<MovieListScreen> createState() => _MovieListScreenState();
@@ -21,7 +21,7 @@ class _MovieListScreenState extends State<MovieListScreen> {
       ),
       body: BlocProvider(
         create: (context) =>
-            MovieBloc()..add(FetchMoviesByGenre(widget.genreId)),
+            MovieBloc()..add(FetchMoviesByGenre(widget.genreId )),
         child: BlocBuilder<MovieBloc, MovieState>(builder: (context, state) {
           if (state is MovieLoading) {
             return Center(

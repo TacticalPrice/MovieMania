@@ -1,12 +1,27 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:movie_mania/models/genre.dart';
-import 'package:movie_mania/services/genre_service.dart';
+import 'dart:async';
+import 'package:bloc/bloc.dart';
+import 'package:meta/meta.dart';
+import 'package:equatable/equatable.dart';
+import 'package:movie_mania/services/genre_service.dart'; // Replace with actual service
+import 'package:movie_mania/models/genre.dart'; // Replace with actual model
 
-abstract class GenreEvent{}
+// Define GenreEvent
+abstract class GenreEvent extends Equatable {
+  @override
+  List<Object?> get props => [];
+}
 
-class FetchGenres extends GenreEvent {}
+class FetchGenres extends GenreEvent {
 
-abstract class GenreState {}
+  @override
+  List<Object?> get props => [];
+}
+
+// Define GenreState
+abstract class GenreState extends Equatable {
+  @override
+  List<Object?> get props => [];
+}
 
 class GenreInitial extends GenreState {}
 
@@ -16,26 +31,34 @@ class GenreLoaded extends GenreState {
   final List<Genre> genres;
 
   GenreLoaded(this.genres);
+
+  @override
+  List<Object?> get props => [genres];
 }
 
-class GenreError extends GenreState {}
+class GenreError extends GenreState {
+  final String message;
 
-class GenreBloc extends Bloc<GenreEvent , GenreState> {
-  final GenreService _genreService = GenreService();
+  GenreError(this.message);
 
-  GenreBloc() : super(GenreInitial());
+  @override
+  List<Object?> get props => [message];
+}
 
-  @override 
-  Stream<GenreState> mapEventToState(GenreEvent event) async* {
-    if(event is FetchGenres){
-      yield GenreLoading();
-      try{
-        final token = 'YOUR_BEARER_TOKEN';
-        final genres = await _genreService.fetchingGenres(token);
-        yield GenreLoaded(genres);
-      }catch(_){
-        yield GenreError();
-      }
+// Define GenreBloc
+class GenreBloc extends Bloc<GenreEvent, GenreState> {
+  GenreBloc() : super(GenreInitial()){
+    on<FetchGenres>(_onFetchGenres);
+  }
+
+  void _onFetchGenres(FetchGenres event , Emitter<GenreState> emit) async{
+    emit(GenreLoading());
+    try{
+      List<Genre> genres = await GenreService().fetchingGenres();
+      print(genres);
+      emit(GenreLoaded(genres));
+    }catch(e){
+      emit(GenreError(e.toString()));
     }
   }
   

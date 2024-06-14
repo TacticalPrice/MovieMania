@@ -13,25 +13,27 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => AuthBloc()..add(AppStarted()),
-    child: Scaffold(
-      body: Center(
-        child: BlocListener<AuthBloc , AuthState>(
-          listener: (context ,state){
-            if(state is Authenticated){
-              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomeScreen()));
-            }
-            if(state is AuthenticationFailed){
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Authentication Failed'))
-              );
-            }
-          },
-          child: CircularProgressIndicator(),
-        ),
+    return Scaffold(
+      body: BlocConsumer<AuthBloc, AuthState>(
+        listener: (context, state) {
+          if (state is Authenticated) {
+            Future.delayed(Duration(seconds: 4), () {
+              Navigator.pushReplacement(context,
+                  MaterialPageRoute(builder: (context) => HomeScreen()));
+            });
+          } else if (state is AuthenticationFailed) {
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text('Authentication Failed')));
+          }
+        },
+        builder: (context, state) {
+          if (state is AuthLoading) {
+            return Center(child: CircularProgressIndicator());
+          } else {
+            return Center(child: Text('Fetching Authentication Token...'));
+          }
+        },
       ),
-    ),
     );
   }
 }
