@@ -10,6 +10,14 @@ class FetchMoviesByGenre extends MovieEvent {
   FetchMoviesByGenre(this.genreId);
 }
 
+class SearchMovies extends MovieEvent {
+  final String query;
+  final String? language;
+  final String? country;
+
+  SearchMovies(this.query , {this.language, this.country});
+}
+
 abstract class MovieState {}
 
 class MovieInitial extends MovieState {}
@@ -38,6 +46,15 @@ class MovieBloc extends Bloc<MovieEvent, MovieState> {
         final movies = await _movieService.fetchMoviesByGenre(token, event.genreId);
         yield MovieLoaded(movies);
       } catch (_) {
+        yield MovieError();
+      }
+    }else if(event is SearchMovies){
+      yield MovieLoading();
+      try{
+        final token = 'token';
+        final movies = await _movieService.searchMovies(token, event.query);
+        yield MovieLoaded(movies);
+      }catch(_){
         yield MovieError();
       }
     }

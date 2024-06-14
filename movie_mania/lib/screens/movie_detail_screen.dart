@@ -18,22 +18,23 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
       appBar: AppBar(
         title: Text(widget.movie.title),
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          CachedNetworkImage(
-            imageUrl: widget.movie.poster,
-            width: double.infinity,
-            fit: BoxFit.cover,
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Text(
-              widget.movie.description,
-              style: TextStyle(fontSize: 16),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Image.network(widget.movie.poster),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Text(
+                widget.movie.title,
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              ),
             ),
-          ),
-        ],
+            Padding(
+              padding: EdgeInsets.all(16),
+              child: Text(widget.movie.description),
+            ),
+          ],
+        ),
       ),
     );
   }
