@@ -6,6 +6,7 @@ import 'package:movie_mania/blocs/genre_bloc.dart';
 import 'package:movie_mania/blocs/movie_bloc.dart';
 import 'package:movie_mania/screens/genre_screen.dart';
 import 'package:movie_mania/screens/movie_list_screen.dart';
+import 'package:movie_mania/screens/search_screen.dart';
 import 'package:movie_mania/services/auth_service.dart';
 import 'package:movie_mania/services/genre_service.dart';
 import 'package:movie_mania/services/movie_service.dart';
@@ -25,6 +26,12 @@ class _HomeScreenState extends State<HomeScreen> {
   GenreService genreService = GenreService();
   int? selectedGenreId;
   int currentPage = 1;
+
+  final List<Widget> _screens = [
+    HomeScreen(), // Placeholder for HomeScreen
+    SearchScreen(), // Your SearchScreen widget
+    //FavoriteScreen(), // Your FavoriteScreen widget
+  ];
 
   @override
   void initState() {

@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:movie_mania/models/movie.dart';
-import 'package:movie_mania/models/genre.dart';
+import 'package:movie_mania/models/search.dart';
 
 class MovieService {
   final Dio _dio = Dio();
@@ -41,23 +41,28 @@ class MovieService {
         .toList();
   }
 
-  Future<List<Movie>> searchMovies(String query,
-      {String? language, String? country}) async {
+  Future<List<SearchResult>> searchMovies(String query) async {
     String? token = await _secureStorage.read(key: 'bearerToken');
+    //print(token);
+    print(query);
     final response = await _dio.get(
       'https://api4.thetvdb.com/v4/search',
       queryParameters: {
         'query': query,
-        'language': language,
-        'country': country,
+        //'language': query,
+        //'country': query,
+        'type' : 'movie',
       },
       options: Options(headers: {
         'Authorization': 'Bearer $token',
         'Accept': 'application/json',
       }),
     );
-    return (response.data['data'] as List)
-        .map((movie) => Movie.fromJson(movie))
-        .toList();
+     
+    List<dynamic> data = response.data['data'] ?? [];
+    print(data);
+    List<SearchResult> searchResult = data.map((item) => SearchResult.fromJson(item)).toList();
+
+    return searchResult;
   }
 }

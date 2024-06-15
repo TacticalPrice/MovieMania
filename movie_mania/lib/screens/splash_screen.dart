@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:movie_mania/blocs/auth_bloc.dart';
 import 'package:movie_mania/screens/home_screen.dart';
+import 'package:movie_mania/widgets/bottom_navigation.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -19,7 +20,7 @@ class _SplashScreenState extends State<SplashScreen> {
           if (state is Authenticated) {
             Future.delayed(Duration(seconds: 4), () {
               Navigator.pushReplacement(context,
-                  MaterialPageRoute(builder: (context) => HomeScreen()));
+                  MaterialPageRoute(builder: (context) => BottomNavigation()));
             });
           } else if (state is AuthenticationFailed) {
             ScaffoldMessenger.of(context)
