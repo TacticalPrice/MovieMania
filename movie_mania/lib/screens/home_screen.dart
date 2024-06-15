@@ -5,6 +5,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:movie_mania/blocs/genre_bloc.dart';
 import 'package:movie_mania/blocs/movie_bloc.dart';
 import 'package:movie_mania/screens/genre_screen.dart';
+import 'package:movie_mania/screens/movie_detail_screen.dart';
 import 'package:movie_mania/screens/movie_list_screen.dart';
 import 'package:movie_mania/screens/search_screen.dart';
 import 'package:movie_mania/services/auth_service.dart';
@@ -27,11 +28,6 @@ class _HomeScreenState extends State<HomeScreen> {
   int? selectedGenreId;
   int currentPage = 1;
 
-  final List<Widget> _screens = [
-    HomeScreen(), // Placeholder for HomeScreen
-    SearchScreen(), // Your SearchScreen widget
-    //FavoriteScreen(), // Your FavoriteScreen widget
-  ];
 
   @override
   void initState() {
@@ -160,15 +156,21 @@ class _HomeScreenState extends State<HomeScreen> {
                       );
                     }
                     final movie = state.movies[index];
-                    return CachedNetworkImage(
-                      imageUrl: movie.image,
-                      placeholder: (context, url) => Container(
-                        height: 100,
-                        width: 100,
-                        color: Colors.grey[300],
-                        child: const Center(child: CircularProgressIndicator()),
+                    return GestureDetector(
+                      onTap: (){
+                        Navigator.push(context, MaterialPageRoute(builder : (context) => MovieDetailScreen(movieId: movie.id,)));
+                        //context.read<MovieBloc>().add(NavigateToMovieDetail(movieId: movie.id));
+                      },
+                      child: CachedNetworkImage(
+                        imageUrl: movie.image,
+                        placeholder: (context, url) => Container(
+                          height: 100,
+                          width: 100,
+                          color: Colors.grey[300],
+                          child: const Center(child: CircularProgressIndicator()),
+                        ),
+                        errorWidget: (context, url, error) => Icon(Icons.error),
                       ),
-                      errorWidget: (context, url, error) => Icon(Icons.error),
                     );
                   },
                 );

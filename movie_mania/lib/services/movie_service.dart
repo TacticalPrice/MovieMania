@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:movie_mania/models/movie.dart';
+import 'package:movie_mania/models/movie_detail.dart';
 import 'package:movie_mania/models/search.dart';
 
 class MovieService {
@@ -65,4 +66,24 @@ class MovieService {
 
     return searchResult;
   }
+
+  Future<MovieDetail> movieDetail(int movieId) async {
+    String? token = await _secureStorage.read(key: 'bearerToken');
+    print(movieId);
+    final response = await _dio.get(
+      'https://api4.thetvdb.com/v4/movies/$movieId',
+      options: Options(headers: {
+        'Authorization': 'Bearer $token',
+        'Accept': 'application/json',
+      }),
+    );
+
+    print(response.data['data']);
+     
+    final Map<String, dynamic> data = response.data['data'];
+    print(data);
+    return MovieDetail.fromJson(data);
+  }
+
+
 }
