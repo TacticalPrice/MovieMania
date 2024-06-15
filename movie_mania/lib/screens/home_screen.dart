@@ -1,17 +1,11 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:movie_mania/blocs/genre_bloc.dart';
 import 'package:movie_mania/blocs/movie_bloc.dart';
-import 'package:movie_mania/screens/genre_screen.dart';
-import 'package:movie_mania/screens/movie_detail_screen.dart';
-import 'package:movie_mania/screens/movie_list_screen.dart';
-import 'package:movie_mania/screens/search_screen.dart';
-import 'package:movie_mania/services/auth_service.dart';
 import 'package:movie_mania/services/genre_service.dart';
 import 'package:movie_mania/services/movie_service.dart';
-import 'package:movie_mania/widgets/movie_item.dart';
+import 'package:movie_mania/widgets/genre_container.dart';
+import 'package:movie_mania/widgets/movie_home.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -27,7 +21,6 @@ class _HomeScreenState extends State<HomeScreen> {
   GenreService genreService = GenreService();
   int? selectedGenreId;
   int currentPage = 1;
-
 
   @override
   void initState() {
@@ -86,14 +79,23 @@ class _HomeScreenState extends State<HomeScreen> {
           BlocProvider(create: (context) => _movieBloc),
         ],
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Text(
+                'Genres',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                textAlign: TextAlign.left,
+              ),
+            ),
             BlocBuilder<GenreBloc, GenreState>(
               builder: (context, state) {
                 if (state is GenreLoading) {
                   return const Center(child: CircularProgressIndicator());
                 } else if (state is GenreLoaded) {
                   return SizedBox(
-                    height: 60,
+                    height: 70,
                     child: ListView.builder(
                         scrollDirection: Axis.horizontal,
                         itemCount: state.genres.length,
@@ -110,22 +112,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 print(genre.id);
                                 _movieBloc.add(FetchMoviesByGenre(genre.id, 1));
                               },
-                              child: Container(
-                                constraints: BoxConstraints(
-                                  minWidth: 30,
-                                ),
-                                height: 20,
-                                decoration: BoxDecoration(
-                                  color: Colors.blue,
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                child: Center(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(4.0),
-                                    child: Text(genre.name),
-                                  ),
-                                ),
-                              ),
+                              child: GenreContainer(genre: genre.name),
                             ),
                           );
                         }),
@@ -144,35 +131,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: CircularProgressIndicator(),
                 );
               } else if (state is MovieLoaded) {
-                return ListView.builder(
-                  controller: _scrollController,
-                  itemCount: state.hasReachedMax
-                      ? state.movies.length
-                      : state.movies.length + 1,
-                  itemBuilder: (context, index) {
-                    if (index >= state.movies.length) {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    }
-                    final movie = state.movies[index];
-                    return GestureDetector(
-                      onTap: (){
-                        Navigator.push(context, MaterialPageRoute(builder : (context) => MovieDetailScreen(movieId: movie.id,)));
-                        //context.read<MovieBloc>().add(NavigateToMovieDetail(movieId: movie.id));
-                      },
-                      child: CachedNetworkImage(
-                        imageUrl: movie.image,
-                        placeholder: (context, url) => Container(
-                          height: 100,
-                          width: 100,
-                          color: Colors.grey[300],
-                          child: const Center(child: CircularProgressIndicator()),
-                        ),
-                        errorWidget: (context, url, error) => Icon(Icons.error),
-                      ),
-                    );
-                  },
+                return MovieHome(
+                  movies: state.movies,
                 );
               } else if (state is MovieError) {
                 return Center(

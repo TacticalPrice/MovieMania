@@ -8,7 +8,7 @@ class MovieService {
   final Dio _dio = Dio();
   final FlutterSecureStorage _secureStorage = FlutterSecureStorage();
 
-  Future<List<Movie>> fetchAllMovies({int page = 1}) async {
+  Future<List<dynamic>> fetchAllMovies({int page = 1}) async {
     String? token = await _secureStorage.read(key: 'bearerToken');
     final response = await _dio.get(
       'https://api4.thetvdb.com/v4/movies',
@@ -19,12 +19,14 @@ class MovieService {
       }),
     );
     //print(response.data);
-    return (response.data['data'] as List)
-        .map((movie) => Movie.fromJson(movie))
-        .toList();
+    final List<dynamic> data = response.data['data'];
+    return data;
+    // (response.data['data'] as List)
+    //     .map((movie) => Movie.fromJson(movie))
+    //     .toList();
   }
 
-  Future<List<Movie>> fetchMoviesByGenre(int? genre, {required int page}) async {
+  Future<List<dynamic>>fetchMoviesByGenre(int? genre, {required int page}) async {
     String? token = await _secureStorage.read(key: 'bearerToken');
     print(4);
     final response = await _dio.get(
@@ -37,9 +39,12 @@ class MovieService {
         'Accept': 'application/json',
       }),
     );
-    return (response.data['data'] as List)
-        .map((movie) => Movie.fromJson(movie))
-        .toList();
+
+    final List<dynamic> data = response.data['data'];
+    return data;
+    // (response.data['data'] as List)
+    //     .map((movie) => Movie.fromJson(movie))
+    //     .toList();
   }
 
   Future<List<SearchResult>> searchMovies(String query) async {
@@ -67,22 +72,25 @@ class MovieService {
     return searchResult;
   }
 
-  Future<MovieDetail> movieDetail(int movieId) async {
+  Future<Map<String , dynamic>> movieDetail(int movieId) async {
     String? token = await _secureStorage.read(key: 'bearerToken');
     print(movieId);
     final response = await _dio.get(
-      'https://api4.thetvdb.com/v4/movies/$movieId',
+      'https://api4.thetvdb.com/v4/movies/$movieId/extended',
+      queryParameters: {
+        'meta' : 'translations',
+        'short' : false,
+      },
       options: Options(headers: {
         'Authorization': 'Bearer $token',
         'Accept': 'application/json',
       }),
     );
 
-    print(response.data['data']);
+    //print(response.data['data']);
      
     final Map<String, dynamic> data = response.data['data'];
-    print(data);
-    return MovieDetail.fromJson(data);
+    return data;
   }
 
 

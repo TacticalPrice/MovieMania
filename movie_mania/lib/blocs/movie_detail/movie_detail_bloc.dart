@@ -13,7 +13,18 @@ class MovieDetailBloc extends Bloc<MovieDetailEvent , MovieDetailState>{
     emit(MovieDetailLoading());
     try{
       final movieDetail = await movieService.movieDetail(event.movieId);
-      emit(MovieDetailLoaded(movieDetail: movieDetail));
+      String englishOverview = '';
+      for(var translation in movieDetail['translations']['overviewTranslations']){
+        if(translation['language'] == 'eng'){
+          englishOverview = translation['overview'];
+        }
+      }
+      print(englishOverview);
+      if (englishOverview.isEmpty) {
+        englishOverview = 'No English overview available';
+      }
+
+      emit(MovieDetailLoaded(movieDetail: movieDetail , englishOverview: englishOverview));
     }catch(e){
       emit(MovieDetailError(e.toString()));
     }

@@ -1,25 +1,4 @@
-class MovieStatus {
-  final int id;
-  final String name;
-  final String recordType;
-  final bool keepUpdated;
 
-  MovieStatus({
-    required this.id,
-    required this.name,
-    required this.recordType,
-    required this.keepUpdated,
-  });
-
-  factory MovieStatus.fromJson(Map<String, dynamic> json) {
-    return MovieStatus(
-      id: json['id'],
-      name: json['name'],
-      recordType: json['recordType'],
-      keepUpdated: json['keepUpdated'],
-    );
-  }
-}
 
 class Movie {
   final int id;
@@ -27,9 +6,8 @@ class Movie {
   final String name;
   final double score;
   final String year;
-  final MovieStatus status;
 
-  Movie({required this.status, required this.id, required this.image, required this.name, required this.score, required this.year});
+  Movie({required this.id, required this.image, required this.name, required this.score, required this.year});
 
   factory Movie.fromJson(Map<String, dynamic> json) {
     return Movie(
@@ -39,7 +17,6 @@ class Movie {
       name: json['name'] ?? '',
       score: json['score'].toDouble() ?? 0.0,
       year: json['year'] ?? '',
-      status : MovieStatus.fromJson(json['status']),
     );
   }
 
@@ -50,7 +27,6 @@ class Movie {
       'name' : name,
       'score' : score,
       'year' : year,
-      'status' : status
     };
   }
 }

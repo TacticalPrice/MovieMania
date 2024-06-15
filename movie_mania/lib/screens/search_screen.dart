@@ -67,14 +67,15 @@ class _SearchScreenState extends State<SearchScreen> {
                         itemCount: state.searchResult.length,
                         itemBuilder: (context, index) {
                           final movie = state.searchResult[index];
+                          //int id = int.parse(movie.id);
                           return MovieItem(
                               searchResult: movie,
                               onTap: () {
-                                // Navigator.push(
-                                //     context,
-                                //     MaterialPageRoute(
-                                //         builder: (context) =>
-                                //             MovieDetailScreen(movie: movie)));
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            MovieDetailScreen(movieId: int.parse(movie.id),)));
                               });
                         });
                   } else if (state is MovieSearchError) {

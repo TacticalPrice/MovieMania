@@ -11,9 +11,10 @@ class MovieDetailInitial extends MovieDetailState {}
 class MovieDetailLoading extends MovieDetailState {}
 
 class MovieDetailLoaded extends MovieDetailState {
-  final MovieDetail movieDetail;
+  final Map<String ,dynamic> movieDetail;
+  final String englishOverview;
 
-  MovieDetailLoaded({required this.movieDetail});
+  MovieDetailLoaded({required this.englishOverview, required this.movieDetail});
 
   @override 
   List<Object?>get props => [movieDetail];

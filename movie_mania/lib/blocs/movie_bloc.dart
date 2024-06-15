@@ -36,12 +36,12 @@ class MovieInitial extends MovieState {}
 class MovieLoading extends MovieState {}
 
 class MovieLoaded extends MovieState {
-  final List<Movie> movies;
+  final List<dynamic> movies;
   final bool hasReachedMax;
   MovieLoaded({required this.movies, required, this.hasReachedMax = false});
 
   MovieLoaded copyWith({
-    List<Movie>? movies,
+    List<dynamic>? movies,
     bool? hasReachedMax,
   }) {
     return MovieLoaded(
