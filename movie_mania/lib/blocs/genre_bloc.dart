@@ -47,15 +47,15 @@ class GenreError extends GenreState {
 
 // Define GenreBloc
 class GenreBloc extends Bloc<GenreEvent, GenreState> {
-  GenreBloc() : super(GenreInitial()){
+  GenreService genreService;
+  GenreBloc({required this.genreService}) : super(GenreInitial()){
     on<FetchGenres>(_onFetchGenres);
   }
 
   void _onFetchGenres(FetchGenres event , Emitter<GenreState> emit) async{
     emit(GenreLoading());
     try{
-      List<Genre> genres = await GenreService().fetchingGenres();
-      print(genres);
+      List<Genre> genres = await genreService.fetchingGenres();
       emit(GenreLoaded(genres));
     }catch(e){
       emit(GenreError(e.toString()));

@@ -7,38 +7,54 @@ class MovieService {
   final Dio _dio = Dio();
   final FlutterSecureStorage _secureStorage = FlutterSecureStorage();
 
-  Future<List<Genre>> fetchGenres() async {
-    String? token = await _secureStorage.read(key: 'token');
+  Future<List<Movie>> fetchAllMovies({int page = 1}) async {
+    String? token = await _secureStorage.read(key: 'bearerToken');
     final response = await _dio.get(
-      'https://api.thetvdb.com/v4/genres',
-      options: Options(headers: {'Authorization': 'Bearer $token'}),
+      'https://api4.thetvdb.com/v4/movies',
+      queryParameters: {'page' : page},
+      options: Options(headers: {
+        'Authorization': 'Bearer $token',
+        'Accept': 'application/json',
+      }),
     );
+    //print(response.data);
     return (response.data['data'] as List)
-        .map((genre) => Genre.fromJson(genre))
+        .map((movie) => Movie.fromJson(movie))
         .toList();
   }
 
-  Future<List<Movie>> fetchMoviesByGenre(int genreId) async {
-    String? token = await _secureStorage.read(key: 'token');
+  Future<List<Movie>> fetchMoviesByGenre(int? genre, {required int page}) async {
+    String? token = await _secureStorage.read(key: 'bearerToken');
+    print(4);
     final response = await _dio.get(
-      'https://api.thetvdb.com/v4/genres/$genreId',
-      options: Options(headers: {'Authorization': 'Bearer $token'}),
+      'https://api4.thetvdb.com/v4/movies/filter',
+      queryParameters: {
+        'genre' : genre
+      },
+      options: Options(headers: {
+        'Authorization': 'Bearer $token',
+        'Accept': 'application/json',
+      }),
     );
     return (response.data['data'] as List)
         .map((movie) => Movie.fromJson(movie))
         .toList();
   }
 
-  Future<List<Movie>> searchMovies(String query, {String? language, String? country}) async {
-    String? token = await _secureStorage.read(key: 'token');
+  Future<List<Movie>> searchMovies(String query,
+      {String? language, String? country}) async {
+    String? token = await _secureStorage.read(key: 'bearerToken');
     final response = await _dio.get(
-      'https://api.thetvdb.com/v4/search',
+      'https://api4.thetvdb.com/v4/search',
       queryParameters: {
         'query': query,
         'language': language,
         'country': country,
       },
-      options: Options(headers: {'Authorization': 'Bearer $token'}),
+      options: Options(headers: {
+        'Authorization': 'Bearer $token',
+        'Accept': 'application/json',
+      }),
     );
     return (response.data['data'] as List)
         .map((movie) => Movie.fromJson(movie))

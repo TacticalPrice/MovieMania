@@ -1,96 +1,123 @@
+import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:movie_mania/models/genre.dart';
 import 'package:movie_mania/models/movie.dart';
 import 'package:movie_mania/services/movie_service.dart';
 
-abstract class MovieEvent {}
-
-class FetchGenres extends MovieEvent {
+abstract class MovieEvent extends Equatable {
+  @override 
+  List<Object?> get props => [];
 }
 
-class FetchMoviesByGenre extends MovieEvent {
+class FetchMovies extends MovieEvent {
+  final int page;
+
+  FetchMovies({this.page = 1});
+  @override
+  List<Object> get props => [page];
+
+}
+
+class FetchMoviesByGenre extends MovieEvent{
+  final int page;
   final int genreId;
 
-  FetchMoviesByGenre(this.genreId);
+  FetchMoviesByGenre(this.genreId, this.page);
+
+  @override 
+  List<Object?> get props => [genreId];
 }
 
-class SearchMovies extends MovieEvent {
-  final String query;
-  final String? language;
-  final String? country;
-
-  SearchMovies(this.query, {this.language, this.country});
+abstract class MovieState extends Equatable {
+  @override 
+  List<Object?> get props => [];
 }
-
-abstract class MovieState {}
 
 class MovieInitial extends MovieState {}
 
 class MovieLoading extends MovieState {}
 
-class GenresLoaded extends MovieState {
-  final List<Genre> genres;
-
-  GenresLoaded(this.genres);
-}
-
 class MovieLoaded extends MovieState {
   final List<Movie> movies;
+  final bool hasReachedMax;
+  MovieLoaded({required this.movies, required , this.hasReachedMax = false});
 
-  MovieLoaded(this.movies);
+  MovieLoaded copyWith({
+    List<Movie>? movies,
+    bool? hasReachedMax,
+  }) {
+    return MovieLoaded(
+      movies: movies ?? this.movies,
+      hasReachedMax: hasReachedMax ?? this.hasReachedMax,
+    );
+  }
+
+  @override
+  List<Object?>get props => [movies , hasReachedMax]; 
 }
 
 class MovieError extends MovieState {
   final String message;
-
   MovieError(this.message);
 
   @override 
-  String toString() => 'MovieErro : $message';
+  List<Object?> get props => [message];
 }
 
-class MovieBloc extends Bloc<MovieEvent, MovieState> {
-  final MovieService _movieService = MovieService();
+class MovieBloc extends Bloc<MovieEvent , MovieState>{
+  final MovieService movieService;
 
-  MovieBloc() : super(MovieInitial()){
-    on<FetchGenres>(_onFetchGenres);
+  MovieBloc({required this.movieService}) : super(MovieInitial()){
+    on<FetchMovies>(_onFetchMovies);
     on<FetchMoviesByGenre>(_onFetchMoviesByGenre);
-    on<SearchMovies>(_onSearchMovies);
   }
 
-  void _onFetchGenres(FetchGenres event , Emitter<MovieState>emit) async{
+  void _onFetchMovies(FetchMovies event, Emitter<MovieState> emit) async {
+    final currentState = state;
+    if (currentState is MovieLoaded && currentState.hasReachedMax) return;
+
+    try {
+      if (currentState is MovieInitial || currentState is MovieLoading) {
+        final movies = await movieService.fetchAllMovies(page: event.page);
+        emit(MovieLoaded(movies: movies, hasReachedMax: movies.isEmpty));
+      } else if (currentState is MovieLoaded) {
+        final movies = await movieService.fetchAllMovies(page: event.page);
+        emit(movies.isEmpty
+            ? currentState.copyWith(hasReachedMax: true)
+            : MovieLoaded(
+                movies: currentState.movies + movies,
+                hasReachedMax: false,
+              ));
+      }
+    } catch (e) {
+      emit(MovieError(e.toString()));
+    }
+  }
+   
+   void _onFetchMoviesByGenre(FetchMoviesByGenre event, Emitter<MovieState> emit) async {
+    
     emit(MovieLoading());
+
     try{
-      final genres = await _movieService.fetchGenres();
-      emit(GenresLoaded(genres));
-    }catch(e){
-      emit(MovieError(e.toString()));
-    }
+      final movies = await movieService.fetchMoviesByGenre(event.genreId, page: event.page);
+      emit(MovieLoaded(movies: movies, hasReachedMax: movies.isEmpty));
+    // try {
+    //   if (currentState is MovieInitial || currentState is MovieLoading) {
+    //     final movies = await movieService.fetchMoviesByGenre(event.genreId, page: event.page);
+    //     emit(MovieLoaded(movies: movies, hasReachedMax: movies.isEmpty));
+    //   } else if (currentState is MovieLoaded) {
+    //     final movies = await movieService.fetchMoviesByGenre(event.genreId, page: event.page);
+    //     emit(movies.isEmpty
+    //         ? currentState.copyWith(hasReachedMax: true)
+    //         : MovieLoaded(
+    //             movies: currentState.movies + movies,
+    //             hasReachedMax: false,
+    //           ));
+    //   }
+    // } catch (e) {
+    //   emit(MovieError(e.toString()));
+    // }
+  }catch(e){
+    emit(MovieError(e.toString()));
   }
-
-  void _onFetchMoviesByGenre(FetchMoviesByGenre event, Emitter<MovieState> emit) async {
-    emit(MovieLoading());
-    try {
-      final movies = await _movieService.fetchMoviesByGenre(event.genreId);
-      emit(MovieLoaded(movies));
-    } catch (e) {
-      emit(MovieError(e.toString()));
-    }
-  }
-
-  void _onSearchMovies(SearchMovies event, Emitter<MovieState> emit) async {
-    emit(MovieLoading());
-    try {
-      final movies = await _movieService.searchMovies(
-        event.query,
-        language: event.language,
-        country: event.country,
-      );
-      emit(MovieLoaded(movies));
-    } catch (e) {
-      emit(MovieError(e.toString()));
-    }
-  }
-
-
+   }
 }

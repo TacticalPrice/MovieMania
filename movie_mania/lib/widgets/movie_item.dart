@@ -15,8 +15,8 @@ class _MovieItemState extends State<MovieItem> {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      leading: Image.network(widget.movie.poster),
-      title: Text(widget.movie.title),
+      leading: Image.network(widget.movie.image),
+      title: Text(widget.movie.name),
       onTap: widget.onTap,
     );
   }

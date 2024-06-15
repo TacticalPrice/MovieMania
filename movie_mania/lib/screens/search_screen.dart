@@ -50,11 +50,11 @@ class _SearchScreenState extends State<SearchScreen> {
                         return MovieItem(
                             movie: movie,
                             onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          MovieDetailScreen(movie: movie)));
+                              // Navigator.push(
+                              //     context,
+                              //     MaterialPageRoute(
+                              //         builder: (context) =>
+                              //             MovieDetailScreen(movie: movie)));
                             });
                       });
                 } else if (state is MovieError) {
