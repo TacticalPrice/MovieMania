@@ -29,7 +29,7 @@ class _MovieHomeState extends State<MovieHome> {
                   context,
                   MaterialPageRoute(
                       builder: (context) => MovieDetailScreen(
-                            movieId: castOrCrew['id'],
+                            movieId: castOrCrew['id'].toString(),
                           )));
             },
             child: Card(
@@ -48,7 +48,7 @@ class _MovieHomeState extends State<MovieHome> {
                             'https://artworks.thetvdb.com${castOrCrew['image']}',
                         fit: BoxFit.cover,
                         placeholder: (context, url) => Center(
-                          child: CircularProgressIndicator(),
+                          child: SizedBox(),
                         ),
                         errorWidget: (context, url, error) => Icon(Icons.error),
                       ),

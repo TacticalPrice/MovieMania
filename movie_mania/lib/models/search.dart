@@ -1,7 +1,6 @@
 class SearchResult {
   final String id;
   final String name;
-  final String overview;
   final String imageUrl;
   final List<String> genres;
   final String country;
@@ -11,7 +10,6 @@ class SearchResult {
   SearchResult({
     required this.id,
     required this.name,
-    required this.overview,
     required this.imageUrl,
     required this.genres,
     required this.country,
@@ -23,7 +21,6 @@ class SearchResult {
     return SearchResult(
       id: json['id'] ?? '',
       name: json['name'] ?? '',
-      overview: json['overview'] ?? '',
       imageUrl: json['image_url'] ?? '',
       genres: List<String>.from(json['genres'] ?? []),
       country: json['country'] ?? '',

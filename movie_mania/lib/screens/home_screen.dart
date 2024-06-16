@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lottie/lottie.dart';
 import 'package:movie_mania/blocs/genre_bloc.dart';
 import 'package:movie_mania/blocs/movie_bloc.dart';
 import 'package:movie_mania/services/genre_service.dart';
@@ -21,6 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
   GenreService genreService = GenreService();
   int? selectedGenreId;
   int currentPage = 1;
+  bool isSelected = false;
 
   @override
   void initState() {
@@ -71,6 +73,11 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Movie Mania'),
+        leading: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Container(
+              height: 50, width: 50, child: Image.asset('assets/Icon_2.png')),
+        ),
         centerTitle: true,
       ),
       body: MultiBlocProvider(
@@ -92,7 +99,25 @@ class _HomeScreenState extends State<HomeScreen> {
             BlocBuilder<GenreBloc, GenreState>(
               builder: (context, state) {
                 if (state is GenreLoading) {
-                  return const Center(child: CircularProgressIndicator());
+                  ThemeData theme = Theme.of(context);
+                  Color containerColor;
+
+                  if (theme.brightness == Brightness.light) {
+                    containerColor = Colors.grey[300]!;
+                  } else {
+                    containerColor = theme.primaryColor;
+                  }
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                      height: 60,
+                      width: MediaQuery.of(context).size.width,
+                      decoration: BoxDecoration(
+                        color: containerColor,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                    ),
+                  );
                 } else if (state is GenreLoaded) {
                   return SizedBox(
                     height: 70,
@@ -101,6 +126,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         itemCount: state.genres.length,
                         itemBuilder: (context, index) {
                           final genre = state.genres[index];
+                          bool isSelected = selectedGenreId == genre.id;
                           return Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: GestureDetector(
@@ -109,10 +135,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                   selectedGenreId = genre.id;
                                   currentPage = 1;
                                 });
-                                print(genre.id);
                                 _movieBloc.add(FetchMoviesByGenre(genre.id, 1));
                               },
-                              child: GenreContainer(genre: genre.name),
+                              child: GenreContainer(
+                                  genre: genre.name, isSelected: isSelected),
                             ),
                           );
                         }),
@@ -139,9 +165,28 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: Text(state.message),
                 );
               } else {
-                return Center(
-                  child: Text('Unknown State'),
-                );
+                ThemeData theme = Theme.of(context);
+
+                if (theme.brightness == Brightness.light) {
+                  return Center(
+                    child: Lottie.asset(
+                      "assets/loader.json",
+                      width: 100,
+                      height: 100,
+                      fit: BoxFit.cover,
+                    ),
+                  );
+                } 
+                else {
+                  return Center(
+                    child: Lottie.asset(
+                      "assets/loader2.json",
+                      width: 100,
+                      height: 100,
+                      fit: BoxFit.cover,
+                    ),
+                  );
+                }
               }
             }))
           ],

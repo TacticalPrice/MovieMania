@@ -36,7 +36,7 @@ class _CastAndCrewTabState extends State<CastAndCrewTab> {
                       imageUrl: castOrCrew['image'],
                       fit: BoxFit.cover,
                       placeholder: (context, url) => Center(
-                        child: CircularProgressIndicator(),
+                        child: SizedBox(),
                       ),
                       errorWidget: (context, url, error) => Icon(Icons.error),
                     ),
@@ -46,8 +46,15 @@ class _CastAndCrewTabState extends State<CastAndCrewTab> {
                   padding: const EdgeInsets.all(8),
                   child: Column(
                     children: [
+                      castOrCrew['name'] != null
+                      ? 
                       Text(
-                        '${castOrCrew['personName']}  ${castOrCrew['name'] ?? ''}',
+                        '${castOrCrew['personName']} as  ${castOrCrew['name'] ?? ''}',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                        textAlign: TextAlign.center,
+                      )
+                      : Text(
+                        '${castOrCrew['personName']}',
                         style: TextStyle(fontWeight: FontWeight.bold),
                         textAlign: TextAlign.center,
                       ),

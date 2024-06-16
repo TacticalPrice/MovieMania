@@ -8,7 +8,7 @@ class MovieStartInitial extends MovieSearchState {}
 class MovieSearchLoading extends MovieSearchState {}
 
 class MovieSearchLoaded extends MovieSearchState {
-  final List<SearchResult> searchResult;
+  final List<dynamic> searchResult;
   final String query;
   final bool hasReachedEnd;
 
@@ -24,8 +24,9 @@ class MovieSearchError extends MovieSearchState {
 }
 
 class MovieSearchShowFilterDialog extends MovieSearchState {
+  final String query;
   final String? language;
   final String? country;
 
-  MovieSearchShowFilterDialog({ this.language, this.country});
+  MovieSearchShowFilterDialog(this.query, this.language, this.country);
 }

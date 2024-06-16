@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lottie/lottie.dart';
 import 'package:movie_mania/blocs/movie_bloc.dart';
 import 'package:movie_mania/blocs/search/search_bloc.dart';
 import 'package:movie_mania/screens/movie_detail_screen.dart';
@@ -36,7 +37,7 @@ class _SearchScreenState extends State<SearchScreen> {
   void _onScroll() {
     if (_scrollController.position.pixels ==
         _scrollController.position.maxScrollExtent) {
-      _movieSearchBloc.add(LoadMoreResults());
+      _movieSearchBloc.add(LoadMoreResults(_searchController.text));
     }
   }
 
@@ -75,6 +76,9 @@ class _SearchScreenState extends State<SearchScreen> {
                   language = value;
                 },
               ),
+              SizedBox(
+                height: 15,
+              ),
               DropdownButtonFormField<String>(
                 value: country,
                 decoration: InputDecoration(labelText: 'Country'),
@@ -96,15 +100,26 @@ class _SearchScreenState extends State<SearchScreen> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('Cancel'),
+              child: Text(
+                'Cancel',
+              ),
             ),
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
-                _movieSearchBloc
-                    .add(ApplyFilters(language: language, country: country));
+                _movieSearchBloc.add(ApplyFilters(
+                  _searchController.text,
+                  language,
+                  country,
+                ));
+                if (_searchController.text.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text('Please Enter Text in the Search Field')));
+                }
               },
-              child: Text('Apply'),
+              child: Text(
+                'Apply',
+              ),
             ),
           ],
         );
@@ -129,8 +144,11 @@ class _SearchScreenState extends State<SearchScreen> {
                   Container(
                     width: 330,
                     child: TextField(
+                      cursorColor: Colors.red,
                       controller: _searchController,
                       decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(16)),
                         labelText: 'Search',
                         suffixIcon: IconButton(
                           onPressed: () {
@@ -143,59 +161,90 @@ class _SearchScreenState extends State<SearchScreen> {
                     ),
                   ),
                   IconButton(
-                    icon: Icon(Icons.filter_list),
+                    icon: Icon(Icons.filter_alt),
                     onPressed: () {
-                      _movieSearchBloc.add(ShowFilterDialog());
+                      _movieSearchBloc
+                          .add(ShowFilterDialog(_searchController.text));
                     },
                   ),
                 ],
+              ),
+              SizedBox(
+                height: 20,
               ),
               Expanded(
                 child: BlocBuilder<MovieSearchBloc, MovieSearchState>(
                     builder: (context, state) {
                   if (state is MovieSearchLoading) {
-                    return Center(
-                      child: CircularProgressIndicator(),
-                    );
+                    ThemeData theme = Theme.of(context);
+
+                    if (theme.brightness == Brightness.light) {
+                      return Center(
+                        child: Lottie.asset(
+                          "assets/loader.json",
+                          width: 100,
+                          height: 100,
+                          fit: BoxFit.cover,
+                        ),
+                      );
+                    } else {
+                      return Center(
+                        child: Lottie.asset(
+                          "assets/loader2.json",
+                          width: 100,
+                          height: 100,
+                          fit: BoxFit.cover,
+                        ),
+                      );
+                    }
                   } else if (state is MovieSearchLoaded) {
                     return NotificationListener<ScrollNotification>(
                       onNotification: (notification) {
                         if (notification is ScrollEndNotification &&
                             _scrollController.position.extentAfter == 0) {
-                          _movieSearchBloc.add(LoadMoreResults());
+                          _movieSearchBloc
+                              .add(LoadMoreResults(_searchController.text));
                         }
                         return false;
                       },
                       child: ListView.builder(
                           controller: _scrollController,
-                          itemCount: state.searchResult.length + (state.hasReachedEnd ? 0 : 1),
+                          itemCount: state.searchResult.length +
+                              (state.hasReachedEnd ? 0 : 1),
                           itemBuilder: (context, index) {
                             final movie = state.searchResult[index];
-                            //int id = int.parse(movie.id);
-                            return MovieItem(
+                            return GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => MovieDetailScreen(
+                                            movieId: movie['tvdb_id'])));
+                              },
+                              child: MovieItem(
                                 searchResult: movie,
-                                onTap: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              MovieDetailScreen(
-                                                movieId: int.parse(movie.id),
-                                              )));
-                                });
+                              ),
+                            );
                           }),
                     );
                   } else if (state is MovieSearchError) {
                     return Center(child: Text(state.message));
+                    //Center(child: Text('No Result Found'));
                   } else if (state is MovieSearchShowFilterDialog) {
                     WidgetsBinding.instance.addPostFrameCallback((_) {
                       _showFilterDialog(state.language, state.country);
                     });
                     return Container();
                   } else {
-                    return Center(
-                      child: Text('Unknown State'),
-                    );
+                    return SizedBox();
+                    // Center(
+                    //   child: Lottie.asset(
+                    //     "assets/loader.json",
+                    //     width: 100,
+                    //     height: 100,
+                    //     fit: BoxFit.cover,
+                    //   ),
+                    // );
                   }
                 }),
               ),

@@ -1,6 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lottie/lottie.dart';
+import 'package:movie_mania/blocs/local_strorage/local_storage_bloc.dart';
+import 'package:movie_mania/blocs/local_strorage/local_storage_event.dart';
+import 'package:movie_mania/blocs/local_strorage/local_storage_state.dart';
 import 'package:movie_mania/blocs/movie_detail/movie_detail_bloc.dart';
 import 'package:movie_mania/blocs/movie_detail/movie_detail_event.dart';
 import 'package:movie_mania/blocs/movie_detail/movie_detail_state.dart';
@@ -11,7 +15,7 @@ import 'package:movie_mania/widgets/cast_and_crew_tab.dart';
 import 'package:movie_mania/widgets/general_tab.dart';
 
 class MovieDetailScreen extends StatefulWidget {
-  final int movieId;
+  final String movieId;
 
   MovieDetailScreen({required this.movieId});
 
@@ -27,7 +31,6 @@ class _MovieDetailScreenState extends State<MovieDetailScreen>
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _movieDetailBloc = MovieDetailBloc(movieService: movieService);
     _movieDetailBloc.add(FetchMovieDetail(movieId: widget.movieId));
@@ -40,17 +43,67 @@ class _MovieDetailScreenState extends State<MovieDetailScreen>
     super.dispose();
   }
 
+  // void _toggleFavorite(BuildContext context, String movieId, bool isFavorite) {
+  //   BlocProvider.of<LocalStorageBloc>(context).add(
+  //       isFavorite ? RemoveFromFavorites(movieId) : AddToFavorites(movieId));
+  // }
+
+  // void _toggleWatchlist(
+  //     BuildContext context, String movieId, bool isInWatchlist) {
+  //   BlocProvider.of<LocalStorageBloc>(context).add(
+  //       isInWatchlist ? RemoveFromWatchList(movieId) : AddToWatchList(movieId));
+  // }
+
+  // void _toggleWatched(BuildContext context, String movieId, bool isWatched) {
+  //   BlocProvider.of<LocalStorageBloc>(context)
+  //       .add(isWatched ? RemoveFromWatched(movieId) : AddToWatched(movieId));
+  // }
+
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => _movieDetailBloc,
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<MovieDetailBloc>(
+          create: (context) => _movieDetailBloc,
+        ),
+        BlocProvider<LocalStorageBloc>(
+          create: (context) => BlocProvider.of<LocalStorageBloc>(context),
+        ),
+      ],
       child: BlocBuilder<MovieDetailBloc, MovieDetailState>(
         builder: (context, state) {
           if (state is MovieDetailLoading) {
-            return Center(child: CircularProgressIndicator());
+               ThemeData theme = Theme.of(context);
+
+                if (theme.brightness == Brightness.light) {
+                  return Scaffold(
+                    body: Center(
+                      child: Lottie.asset(
+                        "assets/loader.json",
+                        width: 100,
+                        height: 100,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  );
+                } 
+                else {
+                  return Scaffold(
+                    body: Center(
+                      child: Lottie.asset(
+                        "assets/loader2.json",
+                        width: 100,
+                        height: 100,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  );
+                }
           } else if (state is MovieDetailLoaded) {
             final movieDetail = state.movieDetail;
-            print(state.movieDetail['overviewTranslations']);
+            // return BlocBuilder<LocalStorageBloc, LocalStorageState>(
+            //   builder: (context, localStorageState) {
+            //     if (localStorageState is LocalStorageLoaded) {
             return Scaffold(
               appBar: AppBar(
                 title: Text(movieDetail['name']),
@@ -58,57 +111,140 @@ class _MovieDetailScreenState extends State<MovieDetailScreen>
               body: SingleChildScrollView(
                 child: Column(
                   children: [
-                    SizedBox(
-                      height: 80,
-                    ),
+                    SizedBox(height: 20),
                     Center(
-                        child: Container(
-                            height: 300,
-                            width: 200,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Image.network(movieDetail['image']))),
+                      child: Container(
+                        height: 300,
+                        width: 200,
+                        child:  ClipRRect(
+                      borderRadius:
+                          BorderRadius.vertical(top: Radius.circular(8) , bottom: Radius.circular(8)),
+                      child: CachedNetworkImage(
+                        imageUrl:
+                            movieDetail['image'],
+                        fit: BoxFit.cover,
+                        placeholder: (context, url) => Center(
+                          child: SizedBox(),
+                        ),
+                        errorWidget: (context, url, error) => Icon(Icons.error),
+                      ),
+                    ),
+                      ),
+                    ),
                     Padding(
-                      padding:
-                          const EdgeInsets.only(left: 16.0, right: 16, top: 10),
+                      padding: const EdgeInsets.all(16.0),
                       child: Text(
                         movieDetail['name'],
                         style: TextStyle(
-                            fontSize: 24, fontWeight: FontWeight.bold),
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                     Padding(
-                      padding:
-                          const EdgeInsets.only(left: 16.0, right: 16, top: 10),
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
                       child: Text(
                         state.englishOverview,
                         style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.w400),
+                          fontSize: 16,
+                          fontWeight: FontWeight.w400,
+                        ),
                       ),
                     ),
+                    // SizedBox(height: 20),
+                    // Row(
+                    //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    //   children: [
+                    //     IconButton(
+                    //       icon: Icon(
+                    //         localStorageState.favoriteMovies
+                    //                 .contains(movieDetail['id'])
+                    //             ? Icons.favorite
+                    //             : Icons.favorite_border,
+                    //         color: localStorageState.favoriteMovies
+                    //                 .contains(movieDetail['id'])
+                    //             ? Colors.red
+                    //             : null,
+                    //       ),
+                    //       onPressed: () {
+                    //         _toggleFavorite(
+                    //           context,
+                    //           movieDetail['id'],
+                    //           localStorageState.favoriteMovies
+                    //               .contains(movieDetail['id']),
+                    //         );
+                    //       },
+                    //     ),
+                    //     IconButton(
+                    //       icon: Icon(
+                    //         localStorageState.watchListMovies
+                    //                 .contains(movieDetail['id'])
+                    //             ? Icons.bookmark
+                    //             : Icons.bookmark_border,
+                    //         color: localStorageState.watchListMovies
+                    //                 .contains(movieDetail['id'])
+                    //             ? Colors.blue
+                    //             : null,
+                    //       ),
+                    //       onPressed: () {
+                    //         _toggleWatchlist(
+                    //           context,
+                    //           movieDetail['id'],
+                    //           localStorageState.watchListMovies
+                    //               .contains(movieDetail['id']),
+                    //         );
+                    //       },
+                    //     ),
+                    //     IconButton(
+                    //       icon: Icon(
+                    //         localStorageState.watchedMovies
+                    //                 .contains(movieDetail['id'])
+                    //             ? Icons.visibility
+                    //             : Icons.visibility_off,
+                    //         color: localStorageState.watchedMovies
+                    //                 .contains(movieDetail['id'])
+                    //             ? Colors.green
+                    //             : null,
+                    //       ),
+                    //       onPressed: () {
+                    //         _toggleWatched(
+                    //           context,
+                    //           movieDetail['id'],
+                    //           localStorageState.watchedMovies
+                    //               .contains(movieDetail['id']),
+                    //         );
+                    //       },
+                    //     ),
+                    //   ],
+                    // ),
+                    // SizedBox(height: 20),
                     Column(
                       children: [
                         TabBar(
                           controller: _tabController,
                           tabs: [
                             Tab(text: 'General'),
-                            Tab(text: 'Cast & Crew'),
+                            Container(
+                              child: Tab(text: 'Cast & Crew')),
                             Tab(text: 'Artworks'),
                           ],
                         ),
                         Container(
-                          height: 600,
-                          child:
-                              TabBarView(controller: _tabController, children: [
-                            buildGeneralTab(
-                              movieDetail: movieDetail,
-                            ),
-                            CastAndCrewTab(
-                              movieDetail: movieDetail,
-                            ),
-                            ArtWorkTab(movieDetail: movieDetail),
-                          ]),
+                          height: 500,
+                          child: TabBarView(
+                            controller: _tabController,
+                            children: [
+                              buildGeneralTab(
+                                movieDetail: movieDetail,
+                              ),
+                              CastAndCrewTab(
+                                movieDetail: movieDetail,
+                              ),
+                              ArtWorkTab(
+                                movieDetail: movieDetail,
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),
@@ -116,7 +252,16 @@ class _MovieDetailScreenState extends State<MovieDetailScreen>
                 ),
               ),
             );
+
+            //}
+            //     else{
+            //       return Center(child: Text('Loading local storage...'));
+            //     }
+
+            //   },
+            // );
           } else if (state is MovieDetailError) {
+            print(state.message);
             return Center(child: Text(state.message));
           } else {
             return Center(child: Text('Unknown state'));

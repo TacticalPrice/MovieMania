@@ -29,11 +29,11 @@ class MovieSearchBloc extends Bloc<MovieSearchEvent, MovieSearchState> {
     emit(MovieSearchLoading());
     try {
       final searchResult = await movieService.searchMovies( event.query,
-        selectedLanguage!,
-        selectedCountry!,
+        selectedLanguage ?? '',
+        selectedCountry ?? '',
         0,
         10,);
-      emit(MovieSearchLoaded(searchResult, event.query, hasReachedEnd));
+      emit(MovieSearchLoaded(searchResult, event.query, searchResult.isEmpty));
     } catch (e) {
       emit(MovieSearchError(message: e.toString()));
       print(e.toString());
@@ -42,7 +42,7 @@ class MovieSearchBloc extends Bloc<MovieSearchEvent, MovieSearchState> {
 
   void _onShowFilterDialog(
       ShowFilterDialog event, Emitter<MovieSearchState> emit) {
-    emit(MovieSearchShowFilterDialog());
+    emit(MovieSearchShowFilterDialog(event.query, selectedLanguage, selectedCountry));
   }
 
   void _onApplyFilters(
@@ -52,12 +52,12 @@ class MovieSearchBloc extends Bloc<MovieSearchEvent, MovieSearchState> {
     emit(MovieSearchLoading());
 
     try {
-      final searchResult = await movieService.searchMovies(currentQuery!,
-        selectedLanguage!,
-        selectedCountry!,
+      final searchResult = await movieService.searchMovies(event.query,
+        selectedLanguage ?? '',
+        selectedCountry ?? '',
         0,
         10,);
-      emit(MovieSearchLoaded(searchResult, '',hasReachedEnd));
+      emit(MovieSearchLoaded(searchResult, event.query,searchResult.isEmpty));
     } catch (e) {
       emit(MovieSearchError(message: e.toString()));
     }
@@ -78,7 +78,7 @@ class MovieSearchBloc extends Bloc<MovieSearchEvent, MovieSearchState> {
     currentPage += 10;
     try {
       final searchResult = await movieService.searchMovies(
-        currentQuery!,
+        event.query,
         selectedLanguage!,
         selectedCountry!,
         currentPage,
@@ -91,8 +91,8 @@ class MovieSearchBloc extends Bloc<MovieSearchEvent, MovieSearchState> {
 
       if (state is MovieSearchLoaded) {
         final currentState = state as MovieSearchLoaded;
-        final List<SearchResult> updatedResults = List.from(currentState.searchResult)..addAll(searchResult);
-        emit(MovieSearchLoaded(updatedResults, currentQuery!,hasReachedEnd));
+        final List<dynamic> updatedResults = List.from(currentState.searchResult)..addAll(searchResult);
+        emit(MovieSearchLoaded(updatedResults, event.query,hasReachedEnd));
       }
     } catch (e) {
       emit(MovieSearchError(message: e.toString()));

@@ -15,53 +15,34 @@ class _buildGeneralTabState extends State<buildGeneralTab> {
       height: 600,
       child: Column(
         children: [
+          listTile('STATUS', widget.movieDetail['status']['name']),
+          listTile('RELEASED', 'WorldWide ${widget.movieDetail['first_release']['date']}'),
+          listTile('RUNTIME', '${widget.movieDetail['runtime']} minutes'),
           ListTile(
-            leading: Text('STATUS'),
-            trailing: Text(widget.movieDetail['status']['name']),
-            
-          ),
-          ListTile(
-            leading: Text('RELEASED'),
+            leading: Text('GENRES', style: TextStyle(fontSize: 14),),
             trailing: Column(
               children: [
-                Text('WorldWide ${widget.movieDetail['first_release']['date']}'),
-                Text('WorldWide ${widget.movieDetail['first_release']['date']}'),
+                Text(widget.movieDetail['genres'][0]['name'], style: TextStyle(fontSize: 14),),
+                Text(widget.movieDetail['genres'][1]['name'], style: TextStyle(fontSize: 14),),
               ],
             )
             
           ),
-          ListTile(
-            leading: Text('RUNTIME'),
-            trailing: Text('${widget.movieDetail['runtime']} minutes'),
-            
-          ),
-          ListTile(
-            leading: Text('GENRES'),
-            trailing: Column(
-              children: [
-                Text(widget.movieDetail['genres'][0]['name']),
-                Text(widget.movieDetail['genres'][1]['name']),
-              ],
-            )
-            
-          ),
-          ListTile(
-            leading: Text('ORIGINAL COUNTRY'),
-            trailing: Text(widget.movieDetail['originalCountry']),
-            
-          ),
-          ListTile(
-            leading: Text('STATUS'),
-            trailing: Text(widget.movieDetail['originalLanguage']),
-            
-          ),
-          ListTile(
-            leading: Text('STATUS'),
-            trailing: Text(widget.movieDetail['status']['name']),
-            
-          ),
+          listTile('ORIGINAL COUNTRY', widget.movieDetail['originalCountry']),
+          listTile('ORIGINAL LANGUAGE',widget.movieDetail['originalLanguage']),
+          listTile('PRODUCTION COMPANY', widget.movieDetail['companies']['production'][0]['name']),
+          listTile('PRODUCTION COUNTRY', widget.movieDetail['production_countries'][0]['name']),
         ],
       ),
     );
+  }
+
+  Widget listTile(String leading , String trailing){
+    return ListTile(
+      leading: Text(leading, style: TextStyle(fontSize: 14, ),),
+      trailing: Text(trailing,style : TextStyle(fontSize: 14,),),
+
+    );
+
   }
 }

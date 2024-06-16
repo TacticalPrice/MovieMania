@@ -36,7 +36,7 @@ class _ArtWorkTabState extends State<ArtWorkTab> {
                       imageUrl: castOrCrew['image'],
                       fit: BoxFit.cover,
                       placeholder: (context, url) => Center(
-                        child: CircularProgressIndicator(),
+                        child: SizedBox()
                       ),
                       errorWidget: (context, url, error) => Icon(Icons.error),
                     ),

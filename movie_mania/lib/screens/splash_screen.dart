@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lottie/lottie.dart';
 import 'package:movie_mania/blocs/auth_bloc.dart';
 import 'package:movie_mania/screens/home_screen.dart';
 import 'package:movie_mania/widgets/bottom_navigation.dart';
@@ -29,7 +30,27 @@ class _SplashScreenState extends State<SplashScreen> {
         },
         builder: (context, state) {
           if (state is AuthLoading) {
-            return Center(child: CircularProgressIndicator());
+            ThemeData theme = Theme.of(context);
+
+            if (theme.brightness == Brightness.light) {
+              return Center(
+                child: Lottie.asset(
+                  "assets/loader.json",
+                  width: 100,
+                  height: 100,
+                  fit: BoxFit.cover,
+                ),
+              );
+            } else {
+              return Center(
+                child: Lottie.asset(
+                  "assets/loader2.json",
+                  width: 100,
+                  height: 100,
+                  fit: BoxFit.cover,
+                ),
+              );
+            }
           } else {
             return Center(child: Text('Fetching Authentication Token...'));
           }

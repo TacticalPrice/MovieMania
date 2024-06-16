@@ -7,7 +7,7 @@ abstract class MovieDetailEvent extends Equatable{
 }
 
 class FetchMovieDetail extends MovieDetailEvent {
-  final int movieId;
+  final String movieId;
 
   FetchMovieDetail({required this.movieId});
 

@@ -9,19 +9,23 @@ class PerformSearch extends MovieSearchEvent {
   PerformSearch(this.query);
 }
 
-class ShowFilterDialog extends MovieSearchEvent {}
+class ShowFilterDialog extends MovieSearchEvent {
+  final String query;
+  ShowFilterDialog(this.query);
+}
 
 class ApplyFilters extends MovieSearchEvent {
+  final String query;
   final String? language;
   final String? country;
 
-  ApplyFilters({this.language , this.country});
+  ApplyFilters(this.query, this.language , this.country,);
 }
 
 class ChangeLanguage extends MovieSearchEvent {
   final String? language;
 
-   ChangeLanguage(this.language);
+   ChangeLanguage(this.language,);
 
   @override
   List<Object?> get props => [language];
@@ -30,10 +34,13 @@ class ChangeLanguage extends MovieSearchEvent {
 class ChangeCountry extends MovieSearchEvent {
   final String? country;
 
-   ChangeCountry(this.country);
+   ChangeCountry(this.country,);
 
   @override
   List<Object?> get props => [country];
 }
 
-class LoadMoreResults extends MovieSearchEvent {}
+class LoadMoreResults extends MovieSearchEvent {
+  final String query;
+  LoadMoreResults(this.query);
+}
