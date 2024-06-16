@@ -75,24 +75,34 @@ class MovieSearchBloc extends Bloc<MovieSearchEvent, MovieSearchState> {
    if (isLoadingMore || hasReachedEnd) return;
 
     isLoadingMore = true;
-    currentPage += 10;
     try {
-      final searchResult = await movieService.searchMovies(
+      final int nextPage = currentPage +1;
+      final newSearchResult = await movieService.searchMovies(
         event.query,
-        selectedLanguage!,
-        selectedCountry!,
-        currentPage,
-         10,
+        selectedLanguage ?? '',
+        selectedCountry ?? '',
+        nextPage*10,
+        30,
       );
 
-      if (searchResult.isEmpty) {
+      if (newSearchResult.isEmpty) {
         hasReachedEnd = true;
-      }
+      }else{
+        currentPage = nextPage;
+      
 
       if (state is MovieSearchLoaded) {
         final currentState = state as MovieSearchLoaded;
-        final List<dynamic> updatedResults = List.from(currentState.searchResult)..addAll(searchResult);
-        emit(MovieSearchLoaded(updatedResults, event.query,hasReachedEnd));
+        final List<dynamic> updatedResults = List.from(currentState.searchResult)..addAll(newSearchResult);
+        final uniqueResults = updatedResults.toSet().toList();
+
+         if (updatedResults == uniqueResults) {
+          hasReachedEnd = true;
+          emit(MovieSearchLoaded([], event.query, true)); // Empty result example
+        } else {
+          emit(MovieSearchLoaded(uniqueResults, event.query, hasReachedEnd));
+        }
+      }
       }
     } catch (e) {
       emit(MovieSearchError(message: e.toString()));

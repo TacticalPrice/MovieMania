@@ -34,6 +34,7 @@ dependencies:
   flutter_secure_storage: ^9.2.2
   hive: ^2.2.3
   hive_flutter: ^1.1.0
+  hydrated_bloc: ^9.1.5
   json_annotation: ^4.9.0
   lottie: ^3.1.2
   path_provider: ^2.1.3

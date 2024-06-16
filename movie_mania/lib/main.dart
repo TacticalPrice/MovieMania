@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:movie_mania/blocs/Theme/theme_bloc.dart';
 import 'package:movie_mania/blocs/Theme/theme_state.dart';
 import 'package:movie_mania/blocs/auth_bloc.dart';
@@ -9,11 +10,16 @@ import 'package:movie_mania/constants/themes.dart';
 import 'package:movie_mania/screens/home_screen.dart';
 import 'package:movie_mania/screens/search_screen.dart';
 import 'package:movie_mania/screens/splash_screen.dart';
+import 'package:path_provider/path_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
   await Hive.openBox('movies');
+  final storage = await HydratedStorage.build(
+      storageDirectory: await getApplicationDocumentsDirectory());
+
+  HydratedBloc.storage = storage;
   runApp(const MyApp());
 }
 

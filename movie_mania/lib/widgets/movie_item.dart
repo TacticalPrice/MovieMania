@@ -1,8 +1,9 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:movie_mania/models/search.dart';
 
 class MovieItem extends StatefulWidget {
-  final Map<String , dynamic> searchResult;
+  final Map<String, dynamic> searchResult;
   //final VoidCallback onTap;
 
   MovieItem({required this.searchResult});
@@ -27,13 +28,23 @@ class _MovieItemState extends State<MovieItem> {
               child: Container(
                 height: 150,
                 width: 100,
-                child: Image.network(
-                  result['image_url'],
-                  fit: BoxFit.cover,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(8), bottom: Radius.circular(8)),
+                  child: CachedNetworkImage(
+                    imageUrl: widget.searchResult['image_url'],
+                    fit: BoxFit.cover,
+                    placeholder: (context, url) => Center(
+                      child: SizedBox(),
+                    ),
+                    errorWidget: (context, url, error) => Icon(Icons.error),
+                  ),
                 ),
               ),
             ),
-            SizedBox(width: 10,),
+            SizedBox(
+              width: 10,
+            ),
             Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -49,22 +60,26 @@ class _MovieItemState extends State<MovieItem> {
                   '${result['year']} , ${result['status']}',
                 ),
                 result?['overviews']?['eng'] != null
-                ? GestureDetector(
-                  onTap: (){
-                    setState(() {
-                      detail = !detail;
-                    });
-                    
-                  },
-                  child: Text('View Details' , style: TextStyle(color: Colors.red),),
-                )
-                : SizedBox(),
-      
+                    ? GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            detail = !detail;
+                          });
+                        },
+                        child: Text(
+                          'View Details',
+                          style: TextStyle(color: Colors.red),
+                        ),
+                      )
+                    : SizedBox(),
                 detail
-                ? Container(
-                  width: 240,
-                  child: Text(result?['overviews']?['eng'] , maxLines: 6,))
-                : SizedBox()
+                    ? Container(
+                        width: 240,
+                        child: Text(
+                          result?['overviews']?['eng'],
+                          maxLines: 6,
+                        ))
+                    : SizedBox()
               ],
             )
           ],

@@ -25,6 +25,7 @@ class UserScreen extends StatefulWidget {
 
 class _UserScreenState extends State<UserScreen> {
   late UserBloc _userBloc;
+
   final UserService userService = UserService();
 
   @override
@@ -40,14 +41,7 @@ class _UserScreenState extends State<UserScreen> {
     return Scaffold(
         appBar: AppBar(
           title: Text('User Profile'),
-          actions: [
-            Switch(
-              value: BlocProvider.of<ThemeBloc>(context).state is DarkTheme,
-              onChanged: (value) {
-                BlocProvider.of<ThemeBloc>(context).add(ToggleTheme());
-              },
-            ),
-          ],
+          centerTitle: true,
         ),
         body:
             // BlocBuilder<LocalizationBloc, LocalizationState>(
@@ -92,12 +86,32 @@ class _UserScreenState extends State<UserScreen> {
                 return Column(
                   children: [
                     ListTile(
-                      leading: Text('Name'),
-                      trailing: Text(user['name']),
+                      leading: Text(
+                        'Name',
+                        style: TextStyle(fontSize: 14),
+                      ),
+                      trailing:
+                          Text(user['name'], style: TextStyle(fontSize: 14)),
                     ),
                     ListTile(
-                      leading: Text('UserId'),
-                      trailing: Text('${user['id']}'),
+                      leading: Text('UserId', style: TextStyle(fontSize: 14)),
+                      trailing:
+                          Text('${user['id']}', style: TextStyle(fontSize: 14)),
+                    ),
+                    ListTile(
+                      leading:
+                          Text('Theme Change', style: TextStyle(fontSize: 14)),
+                      trailing: BlocBuilder<ThemeBloc, ThemeState>(
+                        builder: (context, themeState) {
+                          return Switch(
+                            value: themeState is DarkTheme,
+                            onChanged: (value) {
+                              BlocProvider.of<ThemeBloc>(context)
+                                  .add(ToggleTheme());
+                            },
+                          );
+                        },
+                      ),
                     ),
 
                     BlocBuilder<LocalStorageBloc, LocalStorageState>(

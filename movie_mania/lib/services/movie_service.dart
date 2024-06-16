@@ -58,6 +58,8 @@ class MovieService {
         'language': language,
         'country': country,
         'type' : 'movie',
+        'offset' : offset,
+        'limit' : limit,
       },
       options: Options(headers: {
         'Authorization': 'Bearer $token',

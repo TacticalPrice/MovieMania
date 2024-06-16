@@ -212,7 +212,30 @@ class _SearchScreenState extends State<SearchScreen> {
                           itemCount: state.searchResult.length +
                               (state.hasReachedEnd ? 0 : 1),
                           itemBuilder: (context, index) {
-                            final movie = state.searchResult[index];
+                            if (index >= state.searchResult.length) {
+                              ThemeData theme = Theme.of(context);
+
+                              if (theme.brightness == Brightness.light) {
+                                return Center(
+                                  child: Lottie.asset(
+                                    "assets/loader.json",
+                                    width: 100,
+                                    height: 100,
+                                    fit: BoxFit.cover,
+                                  ),
+                                );
+                              } else {
+                                return Center(
+                                  child: Lottie.asset(
+                                    "assets/loader2.json",
+                                    width: 100,
+                                    height: 100,
+                                    fit: BoxFit.cover,
+                                  ),
+                                );
+                              }
+                            }else{
+                              final movie = state.searchResult[index];
                             return GestureDetector(
                               onTap: () {
                                 Navigator.push(
@@ -225,8 +248,10 @@ class _SearchScreenState extends State<SearchScreen> {
                                 searchResult: movie,
                               ),
                             );
-                          }),
-                    );
+                          }}),);
+
+                          
+                        
                   } else if (state is MovieSearchError) {
                     return Center(child: Text(state.message));
                     //Center(child: Text('No Result Found'));
