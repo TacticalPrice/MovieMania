@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:movie_mania/blocs/Theme/theme_bloc.dart';
+import 'package:movie_mania/blocs/Theme/theme_event.dart';
+import 'package:movie_mania/blocs/Theme/theme_state.dart';
 import 'package:movie_mania/blocs/user/user_bloc.dart';
 import 'package:movie_mania/blocs/user/user_event.dart';
 import 'package:movie_mania/blocs/user/user_state.dart';
@@ -27,6 +30,21 @@ class _UserScreenState extends State<UserScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text('User Profile'),
+        actions: [
+          BlocBuilder<ThemeBloc, ThemeState>(
+            builder: (context, themeState) {
+              return IconButton(
+                icon: Icon(themeState is LightTheme ? Icons.nightlight_round : Icons.wb_sunny), // Icon for theme toggle based on current theme state
+                onPressed: () {
+                  BlocProvider.of<ThemeBloc>(context).add(ToggleTheme());
+                },
+              );
+            },
+          ),
+        ],
+      ),
       body: BlocProvider(
         create: (context) => _userBloc,
         child: BlocBuilder<UserBloc, UserState>(
