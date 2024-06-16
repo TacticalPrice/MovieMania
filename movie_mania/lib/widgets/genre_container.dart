@@ -45,13 +45,13 @@ class _GenreContainerState extends State<GenreContainer> {
       ),
       child: Center(
         child: Padding(
-          padding: const EdgeInsets.all(4.0),
+          padding: const EdgeInsets.symmetric(vertical :1.0),
           child: Text(
             widget.genre,
             textAlign: TextAlign.center,
             style: theme.textTheme.bodyLarge!.copyWith(
               color: textColor, // Example: using white color for text
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w500,
             ),
           ),
         ),
