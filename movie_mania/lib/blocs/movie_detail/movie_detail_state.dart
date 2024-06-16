@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:movie_mania/models/movie_detail.dart';
 
 abstract class MovieDetailState extends Equatable {
   @override 

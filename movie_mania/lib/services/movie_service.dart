@@ -47,16 +47,16 @@ class MovieService {
     //     .toList();
   }
 
-  Future<List<SearchResult>> searchMovies(String query) async {
+  Future<List<SearchResult>> searchMovies(String query , String language , String country , int offset ,int limit) async {
     String? token = await _secureStorage.read(key: 'bearerToken');
     //print(token);
     print(query);
     final response = await _dio.get(
       'https://api4.thetvdb.com/v4/search',
       queryParameters: {
-        'query': query,
-        //'language': query,
-        //'country': query,
+        'query': language,
+        'language': language,
+        'country': country,
         'type' : 'movie',
       },
       options: Options(headers: {
@@ -64,6 +64,8 @@ class MovieService {
         'Accept': 'application/json',
       }),
     );
+
+    print('current');
      
     List<dynamic> data = response.data['data'] ?? [];
     print(data);

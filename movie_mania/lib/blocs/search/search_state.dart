@@ -9,8 +9,10 @@ class MovieSearchLoading extends MovieSearchState {}
 
 class MovieSearchLoaded extends MovieSearchState {
   final List<SearchResult> searchResult;
+  final String query;
+  final bool hasReachedEnd;
 
-  MovieSearchLoaded(this.searchResult);
+  MovieSearchLoaded(this.searchResult, this.query, this.hasReachedEnd);
 
 }
 
@@ -19,4 +21,11 @@ class MovieSearchError extends MovieSearchState {
 
   MovieSearchError({required this.message});
 
+}
+
+class MovieSearchShowFilterDialog extends MovieSearchState {
+  final String? language;
+  final String? country;
+
+  MovieSearchShowFilterDialog({ this.language, this.country});
 }

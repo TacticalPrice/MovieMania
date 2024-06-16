@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:movie_mania/blocs/auth_bloc.dart';
-import 'package:movie_mania/blocs/movie_bloc.dart';
 import 'package:movie_mania/screens/home_screen.dart';
 import 'package:movie_mania/screens/search_screen.dart';
 import 'package:movie_mania/screens/splash_screen.dart';

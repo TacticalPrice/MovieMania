@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:movie_mania/screens/home_screen.dart';
 import 'package:movie_mania/screens/search_screen.dart';
+import 'package:movie_mania/screens/user_screen.dart';
 
 class BottomNavigation extends StatefulWidget {
   const BottomNavigation({super.key});
@@ -15,7 +16,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
   final List<Widget> _screens = [
     HomeScreen(),
     SearchScreen(),
-    //FavoriteScreen(),
+    UserScreen()
   ];
 
   void _onTap(int index){
@@ -33,7 +34,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
            BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
-            //BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+            BottomNavigationBarItem(icon: Icon(Icons.person), label: 'User'),
         ],
       ),
     );
