@@ -30,6 +30,8 @@ class _MovieDetailScreenState extends State<MovieDetailScreen>
     with SingleTickerProviderStateMixin {
   late MovieDetailBloc _movieDetailBloc;
   final MovieService movieService = MovieService();
+    late FavoritesBloc _favoritesBloc;
+  late WatchlistBloc _watchlistBloc;
   late TabController _tabController;
 
   @override
@@ -37,12 +39,17 @@ class _MovieDetailScreenState extends State<MovieDetailScreen>
     super.initState();
     _movieDetailBloc = MovieDetailBloc(movieService: movieService);
     _movieDetailBloc.add(FetchMovieDetail(movieId: widget.movieId));
+    _favoritesBloc = FavoritesBloc();
+    _watchlistBloc = WatchlistBloc();
     _tabController = TabController(length: 3, vsync: this);
   }
 
   @override
   void dispose() {
     _tabController.dispose();
+   _movieDetailBloc.close();
+   _favoritesBloc.close(); // Dispose of FavoritesBloc
+    _watchlistBloc.close();
     super.dispose();
   }
 
@@ -54,7 +61,10 @@ class _MovieDetailScreenState extends State<MovieDetailScreen>
           create: (context) => _movieDetailBloc,
         ),
         BlocProvider<FavoritesBloc>(
-          create: (context) => BlocProvider.of<FavoritesBloc>(context),
+          create: (context) => _favoritesBloc,
+        ),
+        BlocProvider<WatchlistBloc>(
+          create: (context) => _watchlistBloc,
         ),
       ],
       child: BlocBuilder<MovieDetailBloc, MovieDetailState>(
@@ -140,13 +150,14 @@ class _MovieDetailScreenState extends State<MovieDetailScreen>
                       children: [
                         BlocBuilder<FavoritesBloc, FavoritesState>(
                           builder: (context, favoritesState) {
-                            bool isFavorite = false;
-                            for (var item in favoritesState.favorites) {
-                              if (movieDetail['id'] == item['id']) {
-                                isFavorite = true;
-                                break;
-                              }
-                            }
+                            bool isFavorite = favoritesState.favorites.any((item) => item['id'] == movieDetail['id']);
+                            // bool isFavorite = false;
+                            // for (var item in favoritesState.favorites) {
+                            //   if (movieDetail['id'] == item['id']) {
+                            //     isFavorite = true;
+                            //     break;
+                            //   }
+                            // }
                             return IconButton(
                               icon: Icon(
                                 isFavorite

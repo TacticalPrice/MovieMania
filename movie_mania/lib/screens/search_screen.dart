@@ -7,6 +7,7 @@ import 'package:movie_mania/blocs/data/data_state.dart';
 import 'package:movie_mania/blocs/movie_bloc.dart';
 import 'package:movie_mania/blocs/search/search_bloc.dart';
 import 'package:movie_mania/constants/localizations.dart';
+import 'package:movie_mania/models/search.dart';
 import 'package:movie_mania/screens/movie_detail_screen.dart';
 import 'package:movie_mania/services/movie_service.dart';
 import 'package:movie_mania/services/user_service.dart';
@@ -69,7 +70,7 @@ class _SearchScreenState extends State<SearchScreen> {
           title: Text('filter_search'),
           content: SingleChildScrollView(
             child: Container(
-              width:MediaQuery.of(context).size.width * 0.8,
+              width: MediaQuery.of(context).size.width * 0.8,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -111,7 +112,10 @@ class _SearchScreenState extends State<SearchScreen> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('Cancel' , style: TextStyle(color: Colors.red),),
+              child: Text(
+                'Cancel',
+                style: TextStyle(color: Colors.red),
+              ),
             ),
             TextButton(
               onPressed: () {
@@ -127,7 +131,7 @@ class _SearchScreenState extends State<SearchScreen> {
                   ));
                 }
               },
-              child: Text('Apply' ,style: TextStyle(color: Colors.red)),
+              child: Text('Apply', style: TextStyle(color: Colors.red)),
             ),
           ],
         );
@@ -138,10 +142,11 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () async{ 
-       Navigator.of(context).pushNamedAndRemoveUntil('/bottomNavigation', (route) => false);
-       return true;
-       },
+      onWillPop: () async {
+        Navigator.of(context)
+            .pushNamedAndRemoveUntil('/bottomNavigation', (route) => false);
+        return true;
+      },
       child: Scaffold(
         appBar: AppBar(
           title: Text('Search Movies'),
@@ -158,6 +163,7 @@ class _SearchScreenState extends State<SearchScreen> {
                       width: 330,
                       child: TextField(
                         cursorColor: Colors.red,
+                        textInputAction: TextInputAction.done,
                         controller: _searchController,
                         decoration: InputDecoration(
                           border: OutlineInputBorder(
@@ -190,7 +196,7 @@ class _SearchScreenState extends State<SearchScreen> {
                       builder: (context, state) {
                     if (state is MovieSearchLoading) {
                       ThemeData theme = Theme.of(context);
-      
+
                       if (theme.brightness == Brightness.light) {
                         return Center(
                           child: Lottie.asset(
@@ -211,6 +217,12 @@ class _SearchScreenState extends State<SearchScreen> {
                         );
                       }
                     } else if (state is MovieSearchLoaded) {
+                      if (state.searchResult == []) {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text('No Result Found'),
+                        ));
+                        return SizedBox();
+                      }
                       return NotificationListener<ScrollNotification>(
                         onNotification: (notification) {
                           if (notification is ScrollEndNotification &&
@@ -225,9 +237,26 @@ class _SearchScreenState extends State<SearchScreen> {
                             itemCount: state.searchResult.length +
                                 (state.hasReachedEnd ? 0 : 1),
                             itemBuilder: (context, index) {
-                              if (index >= state.searchResult.length) {
+                              if (index < state.searchResult.length) {
+                                final movie = state.searchResult[index];
+                                return GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => MovieDetailScreen(
+                                            movieId: movie['tvdb_id']),
+                                      ),
+                                    );
+                                  },
+                                  child: MovieItem(
+                                    searchResult: movie,
+                                  ),
+                                );
+                              }
+                              else {
                                 ThemeData theme = Theme.of(context);
-      
+
                                 if (theme.brightness == Brightness.light) {
                                   return Center(
                                     child: Lottie.asset(
@@ -247,27 +276,11 @@ class _SearchScreenState extends State<SearchScreen> {
                                     ),
                                   );
                                 }
-                              } else {
-                                final movie = state.searchResult[index];
-                                return GestureDetector(
-                                  onTap: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                MovieDetailScreen(
-                                                    movieId: movie['tvdb_id'])));
-                                  },
-                                  child: MovieItem(
-                                    searchResult: movie,
-                                  ),
-                                );
                               }
                             }),
                       );
                     } else if (state is MovieSearchError) {
                       return Center(child: Text('No Result Found'));
-                      //Center(child: Text('No Result Found'));
                     } else if (state is MovieSearchShowFilterDialog) {
                       WidgetsBinding.instance.addPostFrameCallback((_) {
                         _showFilterDialog(state.language, state.country);
