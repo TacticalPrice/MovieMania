@@ -4,9 +4,6 @@ import 'package:lottie/lottie.dart';
 import 'package:movie_mania/blocs/Theme/theme_bloc.dart';
 import 'package:movie_mania/blocs/Theme/theme_event.dart';
 import 'package:movie_mania/blocs/Theme/theme_state.dart';
-import 'package:movie_mania/blocs/local_strorage/local_storage_bloc.dart';
-import 'package:movie_mania/blocs/local_strorage/local_storage_event.dart';
-import 'package:movie_mania/blocs/local_strorage/local_storage_state.dart';
 import 'package:movie_mania/blocs/localisation/localisation_bloc.dart';
 import 'package:movie_mania/blocs/localisation/localisation_event.dart';
 import 'package:movie_mania/blocs/localisation/localisation_state.dart';
@@ -14,6 +11,7 @@ import 'package:movie_mania/blocs/search/search_bloc.dart';
 import 'package:movie_mania/blocs/user/user_bloc.dart';
 import 'package:movie_mania/blocs/user/user_event.dart';
 import 'package:movie_mania/blocs/user/user_state.dart';
+import 'package:movie_mania/screens/favorite_screen.dart';
 import 'package:movie_mania/services/user_service.dart';
 
 class UserScreen extends StatefulWidget {
@@ -76,13 +74,6 @@ class _UserScreenState extends State<UserScreen> {
               } else if (state is UserLoaded) {
                 final user = state.userDetail;
 
-                // return BlocBuilder<LocalStorageBloc, LocalStorageState>(
-                //   builder: (context, localStorageState) {
-                //     if (localStorageState is LocalStorageLoaded) {
-                //       final favoriteMovies = localStorageState.favoriteMovies;
-                //       final watchListMovies = localStorageState.watchListMovies;
-                //       final watchedMovies = localStorageState.watchedMovies;
-
                 return Column(
                   children: [
                     ListTile(
@@ -113,93 +104,32 @@ class _UserScreenState extends State<UserScreen> {
                         },
                       ),
                     ),
-
-                    BlocBuilder<LocalStorageBloc, LocalStorageState>(
-                      builder: (context, localStorageState) {
-                        List<String> favoriteMovies = [];
-                        if (localStorageState is LocalStorageLoaded) {
-                          favoriteMovies = localStorageState.favoriteMovies;
-                        }
-                        return Container(
-                          height: 200,
-                          child: ListView.builder(
-                            itemCount: favoriteMovies.length,
-                            itemBuilder: (context, index) {
-                              final movieId = favoriteMovies[index];
-                              return ListTile(
-                                title: Text('Movie ID: $movieId'),
-                                trailing: IconButton(
-                                  icon: Icon(Icons.delete),
-                                  onPressed: () {
-                                    BlocProvider.of<LocalStorageBloc>(context)
-                                        .add(RemoveFromFavorites(movieId));
-                                  },
-                                ),
-                              );
-                            },
-                          ),
-                        );
+                    ListTile(
+                      leading: Text(
+                        'Favorites Movies',
+                        style: TextStyle(fontSize: 14),
+                      ),
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => FavoritesScreen()));
                       },
                     ),
-                    // ListTile(
-                    //   leading: Text('Favorite Movies'),
-                    //   trailing: IconButton(
-                    //     icon: Icon(favoriteMovies.contains(user['id'])
-                    //         ? Icons.favorite
-                    //         : Icons.favorite_border),
-                    //     onPressed: () {
-                    //       if (favoriteMovies.contains(user['id'])) {
-                    //         BlocProvider.of<LocalStorageBloc>(context)
-                    //             .add(RemoveFromFavorites(user['id']));
-                    //       } else {
-                    //         BlocProvider.of<LocalStorageBloc>(context)
-                    //             .add(AddToFavorites(user['id']));
-                    //       }
-                    //     },
-                    //   ),
-                    // ),
-                    // ListTile(
-                    //   leading: Text('Watch List'),
-                    //   trailing: IconButton(
-                    //     icon: Icon(watchListMovies.contains(user['id'])
-                    //         ? Icons.check_box
-                    //         : Icons.check_box_outline_blank),
-                    //     onPressed: () {
-                    //       if (watchListMovies.contains(user['id'])) {
-                    //         BlocProvider.of<LocalStorageBloc>(context)
-                    //             .add(RemoveFromWatchList(user['id']));
-                    //       } else {
-                    //         BlocProvider.of<LocalStorageBloc>(context)
-                    //             .add(AddToWatchList(user['id']));
-                    //       }
-                    //     },
-                    //   ),
-                    // ),
-                    // ListTile(
-                    //   leading: Text('Watched Movies'),
-                    //   trailing: IconButton(
-                    //     icon: Icon(watchedMovies.contains(user['id'])
-                    //         ? Icons.visibility
-                    //         : Icons.visibility_off),
-                    //     onPressed: () {
-                    //       if (watchedMovies.contains(user['id'])) {
-                    //         BlocProvider.of<LocalStorageBloc>(context)
-                    //             .add(RemoveFromWatched(user['id']));
-                    //       } else {
-                    //         BlocProvider.of<LocalStorageBloc>(context)
-                    //             .add(AddToWatched(user['id']));
-                    //       }
-                    //     },
-                    //   ),
-                    // ),
+                    ListTile(
+                      leading: Text(
+                        'WatchList',
+                        style: TextStyle(fontSize: 14),
+                      ),
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => FavoritesScreen()));
+                      },
+                    ),
                   ],
                 );
-                //}
-                // else{
-                //   return Center(child: CircularProgressIndicator(),);
-                // }
-                //   },
-                // );
               } else if (state is UserError) {
                 return Text(state.message);
               } else {

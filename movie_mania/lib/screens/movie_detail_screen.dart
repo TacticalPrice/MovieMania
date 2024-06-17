@@ -2,12 +2,15 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
-import 'package:movie_mania/blocs/local_strorage/local_storage_bloc.dart';
-import 'package:movie_mania/blocs/local_strorage/local_storage_event.dart';
-import 'package:movie_mania/blocs/local_strorage/local_storage_state.dart';
+import 'package:movie_mania/blocs/favorite/favorite_bloc.dart';
+import 'package:movie_mania/blocs/favorite/favorite_event.dart';
+import 'package:movie_mania/blocs/favorite/favorite_state.dart';
 import 'package:movie_mania/blocs/movie_detail/movie_detail_bloc.dart';
 import 'package:movie_mania/blocs/movie_detail/movie_detail_event.dart';
 import 'package:movie_mania/blocs/movie_detail/movie_detail_state.dart';
+import 'package:movie_mania/blocs/watchlist/watchlist_bloc.dart';
+import 'package:movie_mania/blocs/watchlist/watchlist_event.dart';
+import 'package:movie_mania/blocs/watchlist/watchlist_state.dart';
 import 'package:movie_mania/models/movie.dart';
 import 'package:movie_mania/services/movie_service.dart';
 import 'package:movie_mania/widgets/artwork_tab.dart';
@@ -43,22 +46,6 @@ class _MovieDetailScreenState extends State<MovieDetailScreen>
     super.dispose();
   }
 
-  // void _toggleFavorite(BuildContext context, String movieId, bool isFavorite) {
-  //   BlocProvider.of<LocalStorageBloc>(context).add(
-  //       isFavorite ? RemoveFromFavorites(movieId) : AddToFavorites(movieId));
-  // }
-
-  // void _toggleWatchlist(
-  //     BuildContext context, String movieId, bool isInWatchlist) {
-  //   BlocProvider.of<LocalStorageBloc>(context).add(
-  //       isInWatchlist ? RemoveFromWatchList(movieId) : AddToWatchList(movieId));
-  // }
-
-  // void _toggleWatched(BuildContext context, String movieId, bool isWatched) {
-  //   BlocProvider.of<LocalStorageBloc>(context)
-  //       .add(isWatched ? RemoveFromWatched(movieId) : AddToWatched(movieId));
-  // }
-
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
@@ -66,8 +53,8 @@ class _MovieDetailScreenState extends State<MovieDetailScreen>
         BlocProvider<MovieDetailBloc>(
           create: (context) => _movieDetailBloc,
         ),
-        BlocProvider<LocalStorageBloc>(
-          create: (context) => BlocProvider.of<LocalStorageBloc>(context),
+        BlocProvider<FavoritesBloc>(
+          create: (context) => BlocProvider.of<FavoritesBloc>(context),
         ),
       ],
       child: BlocBuilder<MovieDetailBloc, MovieDetailState>(
@@ -101,9 +88,6 @@ class _MovieDetailScreenState extends State<MovieDetailScreen>
                 }
           } else if (state is MovieDetailLoaded) {
             final movieDetail = state.movieDetail;
-            // return BlocBuilder<LocalStorageBloc, LocalStorageState>(
-            //   builder: (context, localStorageState) {
-            //     if (localStorageState is LocalStorageLoaded) {
             return Scaffold(
               appBar: AppBar(
                 title: Text(movieDetail['name']),
@@ -151,73 +135,86 @@ class _MovieDetailScreenState extends State<MovieDetailScreen>
                         ),
                       ),
                     ),
-                    // SizedBox(height: 20),
-                    // Row(
-                    //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    //   children: [
-                    //     IconButton(
-                    //       icon: Icon(
-                    //         localStorageState.favoriteMovies
-                    //                 .contains(movieDetail['id'])
-                    //             ? Icons.favorite
-                    //             : Icons.favorite_border,
-                    //         color: localStorageState.favoriteMovies
-                    //                 .contains(movieDetail['id'])
-                    //             ? Colors.red
-                    //             : null,
-                    //       ),
-                    //       onPressed: () {
-                    //         _toggleFavorite(
-                    //           context,
-                    //           movieDetail['id'],
-                    //           localStorageState.favoriteMovies
-                    //               .contains(movieDetail['id']),
-                    //         );
-                    //       },
-                    //     ),
-                    //     IconButton(
-                    //       icon: Icon(
-                    //         localStorageState.watchListMovies
-                    //                 .contains(movieDetail['id'])
-                    //             ? Icons.bookmark
-                    //             : Icons.bookmark_border,
-                    //         color: localStorageState.watchListMovies
-                    //                 .contains(movieDetail['id'])
-                    //             ? Colors.blue
-                    //             : null,
-                    //       ),
-                    //       onPressed: () {
-                    //         _toggleWatchlist(
-                    //           context,
-                    //           movieDetail['id'],
-                    //           localStorageState.watchListMovies
-                    //               .contains(movieDetail['id']),
-                    //         );
-                    //       },
-                    //     ),
-                    //     IconButton(
-                    //       icon: Icon(
-                    //         localStorageState.watchedMovies
-                    //                 .contains(movieDetail['id'])
-                    //             ? Icons.visibility
-                    //             : Icons.visibility_off,
-                    //         color: localStorageState.watchedMovies
-                    //                 .contains(movieDetail['id'])
-                    //             ? Colors.green
-                    //             : null,
-                    //       ),
-                    //       onPressed: () {
-                    //         _toggleWatched(
-                    //           context,
-                    //           movieDetail['id'],
-                    //           localStorageState.watchedMovies
-                    //               .contains(movieDetail['id']),
-                    //         );
-                    //       },
-                    //     ),
-                    //   ],
-                    // ),
-                    // SizedBox(height: 20),
+                    SizedBox(height: 20),
+                    Row(
+                      children: [
+                        BlocBuilder<FavoritesBloc, FavoritesState>(
+                          builder: (context, favoritesState) {
+                        
+                        
+                            bool isFavorite = false;
+                            for(var item in favoritesState.favorites){
+                              if(movieDetail['id'] == item['id']){
+                                isFavorite = true;
+                              }
+                        
+                            }
+                            return IconButton(
+                              icon: Icon(
+                                isFavorite
+                                    ? Icons.favorite
+                                    : Icons.favorite_border,
+                                color: isFavorite ? Colors.red : null,
+                              ),
+                              onPressed: () {
+                                if (isFavorite) {
+                                  context
+                                      .read<FavoritesBloc>()
+                                      .add(RemoveFromFavorites(movieDetail));
+                                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text('Removed From Favorites')));
+                                } else {
+                                  context
+                                      .read<FavoritesBloc>()
+                                      .add(AddToFavorites(movieDetail));
+                                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text('Added to Favorites')));
+                                }
+                              },
+                            );
+                          },
+                        ),
+
+                        BlocBuilder<WatchlistBloc, WatchlistState>(
+                          builder: (context, watchlistState) {
+                        
+                        
+                            bool isFavorite = false;
+                            for(var item in watchlistState.watchlist){
+                              if(movieDetail['id'] == item['id']){
+                                isFavorite = true;
+                              }
+                        
+                            }
+                            return IconButton(
+                              icon: Icon(
+                                isFavorite
+                                    ? Icons.bookmark
+                                    : Icons.bookmark_add_outlined,
+                                color: isFavorite ? Colors.yellow : null,
+                              ),
+                              onPressed: () {
+                                if (isFavorite) {
+                                  context
+                                      .read<WatchlistBloc>()
+                                      .add(RemoveFromWatchList(movieDetail));
+                                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text('Removed From Favorites')));
+                                } else {
+                                  context
+                                      .read<WatchlistBloc>()
+                                      .add(AddToWatchList(movieDetail));
+                                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text('Added to Favorites')));
+                                }
+                              },
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 20,),
+                    
                     Column(
                       children: [
                         TabBar(
@@ -253,13 +250,6 @@ class _MovieDetailScreenState extends State<MovieDetailScreen>
               ),
             );
 
-            //}
-            //     else{
-            //       return Center(child: Text('Loading local storage...'));
-            //     }
-
-            //   },
-            // );
           } else if (state is MovieDetailError) {
             print(state.message);
             return Center(child: Text(state.message));

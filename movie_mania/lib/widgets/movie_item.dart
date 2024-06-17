@@ -32,7 +32,7 @@ class _MovieItemState extends State<MovieItem> {
                   borderRadius: BorderRadius.vertical(
                       top: Radius.circular(8), bottom: Radius.circular(8)),
                   child: CachedNetworkImage(
-                    imageUrl: widget.searchResult['image_url'],
+                    imageUrl: widget.searchResult['image_url'] ?? '',
                     fit: BoxFit.cover,
                     placeholder: (context, url) => Center(
                       child: SizedBox(),
@@ -52,12 +52,12 @@ class _MovieItemState extends State<MovieItem> {
                 Container(
                   width: 200,
                   child: Text(
-                    result['name'],
+                    result['name'] ?? '',
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
                   ),
                 ),
                 Text(
-                  '${result['year']} , ${result['status']}',
+                  '${result['year'] ?? ''} , ${result['status'] ?? ''}',
                 ),
                 result?['overviews']?['eng'] != null
                     ? GestureDetector(

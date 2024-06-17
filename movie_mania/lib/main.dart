@@ -5,7 +5,8 @@ import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:movie_mania/blocs/Theme/theme_bloc.dart';
 import 'package:movie_mania/blocs/Theme/theme_state.dart';
 import 'package:movie_mania/blocs/auth_bloc.dart';
-import 'package:movie_mania/blocs/local_strorage/local_storage_bloc.dart';
+import 'package:movie_mania/blocs/favorite/favorite_bloc.dart';
+import 'package:movie_mania/blocs/watchlist/watchlist_bloc.dart';
 import 'package:movie_mania/constants/themes.dart';
 import 'package:movie_mania/screens/home_screen.dart';
 import 'package:movie_mania/screens/search_screen.dart';
@@ -40,10 +41,8 @@ class MyApp extends StatelessWidget {
         BlocProvider<ThemeBloc>(
           create: (context) => ThemeBloc(),
         ),
-        BlocProvider<LocalStorageBloc>(create: (context) => LocalStorageBloc()),
-        //  BlocProvider<LocalizationBloc>(
-        //   create: (context) => LocalizationBloc(),
-        // ),
+        BlocProvider(create: (_) => FavoritesBloc()),
+        BlocProvider(create: (_) => WatchlistBloc()),
       ],
       child: BlocBuilder<ThemeBloc, ThemeState>(
         builder: (context, themeState) {

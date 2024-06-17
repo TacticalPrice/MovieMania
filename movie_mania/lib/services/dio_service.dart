@@ -17,7 +17,7 @@ class DioService {
         onRequest: (options, handler) async {
           String? token = await _secureStorage.read(key: 'bearerToken');
           if (token != null && token.isNotEmpty) {
-            options.headers["Authorization"] = 'Bearer $token'; // Correctly format the token
+            options.headers["Authorization"] = 'Bearer $token';
           }
           return handler.next(options); // continue
         },
