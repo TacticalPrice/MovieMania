@@ -30,29 +30,35 @@ class _SplashScreenState extends State<SplashScreen> {
         },
         builder: (context, state) {
           if (state is AuthLoading) {
-            ThemeData theme = Theme.of(context);
+            return SizedBox();
+            // ThemeData theme = Theme.of(context);
 
-            if (theme.brightness == Brightness.light) {
-              return Center(
-                child: Lottie.asset(
-                  "assets/loader.json",
-                  width: 100,
-                  height: 100,
-                  fit: BoxFit.cover,
-                ),
-              );
-            } else {
-              return Center(
-                child: Lottie.asset(
-                  "assets/loader2.json",
-                  width: 100,
-                  height: 100,
-                  fit: BoxFit.cover,
-                ),
-              );
-            }
+            // if (theme.brightness == Brightness.light) {
+            //   return Center(
+            //     child: Lottie.asset(
+            //       "assets/loader.json",
+            //       width: 100,
+            //       height: 100,
+            //       fit: BoxFit.cover,
+            //     ),
+            //   );
+            // } else {
+            //   return Center(
+            //     child: Lottie.asset(
+            //       "assets/loader2.json",
+            //       width: 100,
+            //       height: 100,
+            //       fit: BoxFit.cover,
+            //     ),
+            //   );
+            // }
           } else {
-            return Center(child: Image.asset('assets/popcorn.png'));
+            return Center(
+              child: SizedBox(
+                height: 150,
+                width: 150,
+                child: Center(child: Image.asset('assets/popcorn.png'))),
+            );
           }
         },
       ),

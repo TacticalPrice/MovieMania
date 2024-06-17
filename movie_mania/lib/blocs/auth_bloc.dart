@@ -1,5 +1,5 @@
 import 'package:bloc/bloc.dart';
-import 'package:movie_mania/constants/apikey.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:movie_mania/services/auth_service.dart';
 
 abstract class AuthEvent {}
@@ -25,10 +25,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   
   void _onAppStarted (AppStarted event , Emitter<AuthState> emit) async {
-    String apikey = constants().APIKEY;
+    final String apiKey = dotenv.env['API_KEY'] ?? '';
+    print(apiKey);
     emit(AuthLoading());
     try{
-      await _authService.fetchBearerToken(apikey , 'pin');
+      await _authService.fetchBearerToken(apiKey , 'pin');
       emit(Authenticated());
     }catch(e){
       print(e);

@@ -265,7 +265,7 @@ class _SearchScreenState extends State<SearchScreen> {
                             }),
                       );
                     } else if (state is MovieSearchError) {
-                      return Center(child: Text(state.message));
+                      return Center(child: Text('No Result Found'));
                       //Center(child: Text('No Result Found'));
                     } else if (state is MovieSearchShowFilterDialog) {
                       WidgetsBinding.instance.addPostFrameCallback((_) {

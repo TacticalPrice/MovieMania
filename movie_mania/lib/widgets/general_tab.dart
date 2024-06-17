@@ -22,7 +22,10 @@ class _buildGeneralTabState extends State<buildGeneralTab> {
             leading: Text('GENRES', style: TextStyle(fontSize: 14),),
             trailing: Column(
               children: [
-                Text(widget.movieDetail['genres']?[0]?['name'] ?? 'Not Available', style: TextStyle(fontSize: 14),),
+                widget.movieDetail['genres'].length >=1
+                ?
+                Text(widget.movieDetail['genres']?[0]?['name'] ?? 'Not Available', style: TextStyle(fontSize: 14),)
+                : SizedBox(),
                 widget.movieDetail['genres'].length > 1
                 ? 
                 Text(widget.movieDetail['genres']?[1]?['name'] ?? " ", style: TextStyle(fontSize: 14),)
@@ -33,8 +36,14 @@ class _buildGeneralTabState extends State<buildGeneralTab> {
           ),
           listTile('ORIGINAL COUNTRY', widget.movieDetail['originalCountry']?? 'Not Available'),
           listTile('ORIGINAL LANGUAGE',widget.movieDetail['originalLanguage'] ?? 'Not Available'),
-          listTile('PRODUCTION COMPANY', widget.movieDetail['companies']?['production']?[0]?['name'] ?? 'Not Available'),
-          listTile('PRODUCTION COUNTRY', widget.movieDetail['production_countries']?[0]?['name'] ?? 'Not Available'),
+          widget.movieDetail['companies']?['production'].length > 0
+          ? 
+          listTile('PRODUCTION COMPANY', widget.movieDetail['companies']?['production']?[0]?['name'] ?? 'Not Available')
+          : SizedBox(),
+          widget.movieDetail['production_countries'].length > 0
+          ?
+          listTile('PRODUCTION COUNTRY', widget.movieDetail['production_countries']?[0]?['name'] ?? 'Not Available')
+          : SizedBox(),
         ],
       ),
     );

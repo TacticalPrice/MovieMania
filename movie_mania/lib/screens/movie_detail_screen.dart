@@ -199,13 +199,13 @@ class _MovieDetailScreenState extends State<MovieDetailScreen>
                                       .read<WatchlistBloc>()
                                       .add(RemoveFromWatchList(movieDetail));
                                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text('Removed From Favorites')));
+                          content: Text('Removed From WatchList')));
                                 } else {
                                   context
                                       .read<WatchlistBloc>()
                                       .add(AddToWatchList(movieDetail));
                                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text('Added to Favorites')));
+                          content: Text('Added to WatchList')));
                                 }
                               },
                             );

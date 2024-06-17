@@ -4,14 +4,12 @@ import 'package:lottie/lottie.dart';
 import 'package:movie_mania/blocs/Theme/theme_bloc.dart';
 import 'package:movie_mania/blocs/Theme/theme_event.dart';
 import 'package:movie_mania/blocs/Theme/theme_state.dart';
-import 'package:movie_mania/blocs/localisation/localisation_bloc.dart';
-import 'package:movie_mania/blocs/localisation/localisation_event.dart';
-import 'package:movie_mania/blocs/localisation/localisation_state.dart';
 import 'package:movie_mania/blocs/search/search_bloc.dart';
 import 'package:movie_mania/blocs/user/user_bloc.dart';
 import 'package:movie_mania/blocs/user/user_event.dart';
 import 'package:movie_mania/blocs/user/user_state.dart';
 import 'package:movie_mania/screens/favorite_screen.dart';
+import 'package:movie_mania/screens/language_change.dart';
 import 'package:movie_mania/services/user_service.dart';
 
 class UserScreen extends StatefulWidget {
@@ -132,6 +130,18 @@ class _UserScreenState extends State<UserScreen> {
                               context,
                               MaterialPageRoute(
                                   builder: (context) => FavoritesScreen()));
+                        },
+                      ),
+                      ListTile(
+                        leading: Text(
+                          'Langage Change',
+                          style: TextStyle(fontSize: 14),
+                        ),
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => LanguageChange()));
                         },
                       ),
                     ],
