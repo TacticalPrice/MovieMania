@@ -32,7 +32,7 @@ final ThemeData lightTheme = ThemeData(
   inputDecorationTheme: InputDecorationTheme(
     filled: true,
     fillColor: Colors.grey[200], 
-    contentPadding: EdgeInsets.symmetric(horizontal: 10),// Light grey background
+    contentPadding: EdgeInsets.only(left: 10),// Light grey background
     border: OutlineInputBorder(
       borderRadius: BorderRadius.circular(8.0),
       borderSide: const BorderSide(color: Colors.grey),
@@ -107,7 +107,7 @@ final ThemeData darkTheme = ThemeData(
   inputDecorationTheme: InputDecorationTheme(
     filled: true,
     fillColor: Colors.grey[600],
-    contentPadding: EdgeInsets.symmetric(horizontal: 10),
+    contentPadding: EdgeInsets.only(left: 10),
     border: OutlineInputBorder(
       borderRadius: BorderRadius.circular(8.0),
       borderSide: const BorderSide(color: Colors.grey),

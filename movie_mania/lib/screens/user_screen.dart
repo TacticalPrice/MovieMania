@@ -36,111 +36,118 @@ class _UserScreenState extends State<UserScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: Text('User Profile'),
-          centerTitle: true,
-        ),
-        body:
-            // BlocBuilder<LocalizationBloc, LocalizationState>(
-            //   builder: (context, localizationState) {
-            //     return
-            BlocProvider(
-          create: (context) => _userBloc,
-          child: BlocBuilder<UserBloc, UserState>(
-            builder: (context, state) {
-              if (state is UserLoading) {
-                ThemeData theme = Theme.of(context);
+    return WillPopScope(
+      onWillPop: () async {
+        Navigator.of(context)
+            .pushNamedAndRemoveUntil('/bottomNavigation', (route) => false);
+        return true;
+      },
+      child: Scaffold(
+          appBar: AppBar(
+            title: Text('User Profile'),
+            centerTitle: true,
+          ),
+          body:
+              // BlocBuilder<LocalizationBloc, LocalizationState>(
+              //   builder: (context, localizationState) {
+              //     return
+              BlocProvider(
+            create: (context) => _userBloc,
+            child: BlocBuilder<UserBloc, UserState>(
+              builder: (context, state) {
+                if (state is UserLoading) {
+                  ThemeData theme = Theme.of(context);
 
-                if (theme.brightness == Brightness.light) {
-                  return Center(
-                    child: Lottie.asset(
-                      "assets/loader.json",
-                      width: 100,
-                      height: 100,
-                      fit: BoxFit.cover,
-                    ),
-                  );
-                } else {
-                  return Center(
-                    child: Lottie.asset(
-                      "assets/loader2.json",
-                      width: 100,
-                      height: 100,
-                      fit: BoxFit.cover,
-                    ),
-                  );
-                }
-              } else if (state is UserLoaded) {
-                final user = state.userDetail;
-
-                return Column(
-                  children: [
-                    ListTile(
-                      leading: Text(
-                        'Name',
-                        style: TextStyle(fontSize: 14),
+                  if (theme.brightness == Brightness.light) {
+                    return Center(
+                      child: Lottie.asset(
+                        "assets/loader.json",
+                        width: 100,
+                        height: 100,
+                        fit: BoxFit.cover,
                       ),
-                      trailing:
-                          Text(user['name'], style: TextStyle(fontSize: 14)),
-                    ),
-                    ListTile(
-                      leading: Text('UserId', style: TextStyle(fontSize: 14)),
-                      trailing:
-                          Text('${user['id']}', style: TextStyle(fontSize: 14)),
-                    ),
-                    ListTile(
-                      leading:
-                          Text('Theme Change', style: TextStyle(fontSize: 14)),
-                      trailing: BlocBuilder<ThemeBloc, ThemeState>(
-                        builder: (context, themeState) {
-                          return Switch(
-                            value: themeState is DarkTheme,
-                            onChanged: (value) {
-                              BlocProvider.of<ThemeBloc>(context)
-                                  .add(ToggleTheme());
-                            },
-                          );
+                    );
+                  } else {
+                    return Center(
+                      child: Lottie.asset(
+                        "assets/loader2.json",
+                        width: 100,
+                        height: 100,
+                        fit: BoxFit.cover,
+                      ),
+                    );
+                  }
+                } else if (state is UserLoaded) {
+                  final user = state.userDetail;
+
+                  return Column(
+                    children: [
+                      ListTile(
+                        leading: Text(
+                          'Name',
+                          style: TextStyle(fontSize: 14),
+                        ),
+                        trailing:
+                            Text(user['name'], style: TextStyle(fontSize: 14)),
+                      ),
+                      ListTile(
+                        leading: Text('UserId', style: TextStyle(fontSize: 14)),
+                        trailing: Text('${user['id']}',
+                            style: TextStyle(fontSize: 14)),
+                      ),
+                      ListTile(
+                        leading: Text('Theme Change',
+                            style: TextStyle(fontSize: 14)),
+                        trailing: BlocBuilder<ThemeBloc, ThemeState>(
+                          builder: (context, themeState) {
+                            return Switch(
+                              value: themeState is DarkTheme,
+                              onChanged: (value) {
+                                BlocProvider.of<ThemeBloc>(context)
+                                    .add(ToggleTheme());
+                              },
+                            );
+                          },
+                        ),
+                      ),
+                      ListTile(
+                        leading: Text(
+                          'Favorites Movies',
+                          style: TextStyle(fontSize: 14),
+                        ),
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => FavoritesScreen()));
                         },
                       ),
-                    ),
-                    ListTile(
-                      leading: Text(
-                        'Favorites Movies',
-                        style: TextStyle(fontSize: 14),
+                      ListTile(
+                        leading: Text(
+                          'WatchList',
+                          style: TextStyle(fontSize: 14),
+                        ),
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => FavoritesScreen()));
+                        },
                       ),
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => FavoritesScreen()));
-                      },
-                    ),
-                    ListTile(
-                      leading: Text(
-                        'WatchList',
-                        style: TextStyle(fontSize: 14),
-                      ),
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => FavoritesScreen()));
-                      },
-                    ),
-                  ],
-                );
-              } else if (state is UserError) {
-                return Text(state.message);
-              } else {
-                return Text('Unknown State');
-              }
-            },
+                    ],
+                  );
+                } else if (state is UserError) {
+                  return Text(state.message);
+                } else {
+                  return Text('Unknown State');
+                }
+              },
+            ),
+          )
+          //   },
+          // ),
           ),
-        )
-        //   },
-        // ),
-        );
+    );
   }
 
   @override

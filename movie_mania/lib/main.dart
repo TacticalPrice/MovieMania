@@ -11,6 +11,7 @@ import 'package:movie_mania/constants/themes.dart';
 import 'package:movie_mania/screens/home_screen.dart';
 import 'package:movie_mania/screens/search_screen.dart';
 import 'package:movie_mania/screens/splash_screen.dart';
+import 'package:movie_mania/widgets/bottom_navigation.dart';
 import 'package:path_provider/path_provider.dart';
 
 void main() async {
@@ -58,6 +59,7 @@ class MyApp extends StatelessWidget {
             routes: {
               '/home': (context) => HomeScreen(),
               '/search': (context) => SearchScreen(),
+              '/bottomNavigation' : (context) => BottomNavigation()
             },
           );
           //   },
