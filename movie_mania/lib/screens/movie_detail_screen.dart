@@ -150,14 +150,14 @@ class _MovieDetailScreenState extends State<MovieDetailScreen>
                       children: [
                         BlocBuilder<FavoritesBloc, FavoritesState>(
                           builder: (context, favoritesState) {
-                            bool isFavorite = favoritesState.favorites.any((item) => item['id'] == movieDetail['id']);
-                            // bool isFavorite = false;
-                            // for (var item in favoritesState.favorites) {
-                            //   if (movieDetail['id'] == item['id']) {
-                            //     isFavorite = true;
-                            //     break;
-                            //   }
-                            // }
+                            //bool isFavorite = favoritesState.favorites.any((item) => item['id'] == movieDetail['id']);
+                            bool isFavorite = false;
+                            for (var item in favoritesState.favorites) {
+                              if (movieDetail['id'] == item['id']) {
+                                isFavorite = true;
+                                break;
+                              }
+                            }
                             return IconButton(
                               icon: Icon(
                                 isFavorite
