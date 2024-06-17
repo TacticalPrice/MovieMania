@@ -4,7 +4,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 class DioService {
   final FlutterSecureStorage _secureStorage = FlutterSecureStorage();
   final Dio _dio = Dio(BaseOptions(
-    baseUrl: "https://api4.thetvdb.com", // replace with your base URL
+    baseUrl: "https://api4.thetvdb.com",
     headers: {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
@@ -12,36 +12,42 @@ class DioService {
   ));
 
   DioService() {
-    _dio.interceptors.add(InterceptorsWrapper(
-      onRequest: (options, handler) async {
-        String? token = await _secureStorage.read(key: 'bearerToken');
-        options.headers["Authorization"] = token; // Example for authorization header
-        return handler.next(options); // continue
-      },
-      onResponse: (response, handler) {
-        // Do something with the response data if needed
-        return handler.next(response); // continue
-      },
-      onError: (DioException error, handler) {
-        // Handle errors
-        if (error.response != null) {
-          // You can check the status code and handle different responses
-          switch (error.response!.statusCode) {
-            case 400:
-              // Handle 400 error
-              break;
-            case 401:
-              // Handle unauthorized error
-              break;
-            case 500:
-              // Handle server error
-              break;
-            // Add more cases if needed
+    _dio.interceptors.add(
+      InterceptorsWrapper(
+        onRequest: (options, handler) async {
+          String? token = await _secureStorage.read(key: 'bearerToken');
+          if (token != null && token.isNotEmpty) {
+            options.headers["Authorization"] = 'Bearer $token'; // Correctly format the token
           }
-        }
-        return handler.next(error); // continue
-      },
-    ));
+          return handler.next(options); // continue
+        },
+        onResponse: (response, handler) {
+          // Do something with the response data if needed
+          return handler.next(response); // continue
+        },
+        onError: (DioException error, handler) {
+          // Handle errors
+          if (error.response != null) {
+            switch (error.response!.statusCode) {
+              case 400:
+                print('Bad request: ${error.response!.data}');
+                break;
+              case 401:
+                print('Unauthorized: ${error.response!.data}');
+                break;
+              case 500:
+                print('Server error: ${error.response!.data}');
+                break;
+              default:
+                print('Error: ${error.response!.statusCode} - ${error.response!.data}');
+            }
+          } else {
+            print('Unexpected error: ${error.message}');
+          }
+          return handler.next(error); // continue
+        },
+      ),
+    );
   }
 
   Dio get dio => _dio;

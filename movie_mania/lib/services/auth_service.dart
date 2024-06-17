@@ -1,8 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:movie_mania/services/dio_service.dart';
 
 class AuthService {
-  final Dio _dio = Dio();
+  final Dio dio = Dio();
+  final DioService dioService  = DioService();
   final FlutterSecureStorage _secureStorage = FlutterSecureStorage();
 
   Future<String> fetchBearerToken(String apiKey , String? pin) async {
@@ -11,8 +13,7 @@ class AuthService {
     {
       data['pin'] = pin;
     }
-    final response = await _dio.post(
-      'https://api4.thetvdb.com/v4/login',
+    final response = await dioService.dio.post('/v4/login',
       data: data,
     );
 

@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:movie_mania/constants/apikey.dart';
 import 'package:movie_mania/services/auth_service.dart';
 
 abstract class AuthEvent {}
@@ -24,9 +25,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   
   void _onAppStarted (AppStarted event , Emitter<AuthState> emit) async {
+    String apikey = constants().APIKEY;
     emit(AuthLoading());
     try{
-      await _authService.fetchBearerToken('455049ec-a1ac-4018-80d1-4a9c9008f053' , 'pin');
+      await _authService.fetchBearerToken(apikey , 'pin');
       emit(Authenticated());
     }catch(e){
       print(e);
