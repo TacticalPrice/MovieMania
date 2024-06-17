@@ -9,6 +9,7 @@ import 'package:movie_mania/blocs/auth_bloc.dart';
 import 'package:movie_mania/blocs/favorite/favorite_bloc.dart';
 import 'package:movie_mania/blocs/localization_bloc.dart';
 import 'package:movie_mania/blocs/watchlist/watchlist_bloc.dart';
+import 'package:movie_mania/constants/localizations.dart';
 import 'package:movie_mania/constants/themes.dart';
 import 'package:movie_mania/screens/home_screen.dart';
 import 'package:movie_mania/screens/search_screen.dart';
@@ -49,20 +50,22 @@ class MyApp extends StatelessWidget {
       ],
       child: BlocBuilder<ThemeBloc, ThemeState>(
         builder: (context, themeState) {
-          return BlocBuilder<LocalizationBloc, LocalizationState>(
-            builder: (context, localizationState) {
+          // return BlocBuilder<LocalizationBloc, LocalizationState>(
+          //   builder: (context, localizationState) {
               return MaterialApp(
                 title: 'Movie Mania',
                 theme: themeState is LightTheme ? lightTheme : darkTheme,
                 darkTheme: darkTheme,
                 themeMode:
                     themeState is LightTheme ? ThemeMode.light : ThemeMode.dark,
-                locale: localizationState.locale,
-                supportedLocales: [
-                  Locale('en', ''),
-                  Locale('es', ''),
-                ],
-              
+                //locale: localizationState.locale,
+                // supportedLocales: [
+                //   Locale('en', ''),
+                //   Locale('es', ''),
+                // ],
+                // localizationsDelegates: [
+                //   AppLocalizations.delegate,
+                // ],
                 home: SplashScreen(),
                 routes: {
                   '/home': (context) => HomeScreen(),
@@ -71,8 +74,8 @@ class MyApp extends StatelessWidget {
                 },
               );
             },
-          );
-        },
+        //   );
+        // },
       ),
     );
   }

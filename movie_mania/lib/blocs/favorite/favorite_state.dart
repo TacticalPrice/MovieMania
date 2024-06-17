@@ -8,8 +8,15 @@ class FavoritesState extends Equatable {
 
   factory FavoritesState.initial() {
     return FavoritesState(favorites: []);
+    
   }
 
   @override
   List<Object?> get props => [favorites];
+
+   FavoritesState copyWith({List<Map<String, dynamic>>? favorites}) {
+    return FavoritesState(favorites: favorites ?? this.favorites);
+  }
+
+  
 }

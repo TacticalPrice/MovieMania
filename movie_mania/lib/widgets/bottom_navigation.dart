@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:movie_mania/blocs/movie_bloc.dart';
 import 'package:movie_mania/screens/home_screen.dart';
 import 'package:movie_mania/screens/search_screen.dart';
 import 'package:movie_mania/screens/user_screen.dart';
+import 'package:movie_mania/services/movie_service.dart';
 
 class BottomNavigation extends StatefulWidget {
   const BottomNavigation({super.key});
@@ -12,6 +14,14 @@ class BottomNavigation extends StatefulWidget {
 
 class _BottomNavigationState extends State<BottomNavigation> {
   int _currentIndex = 0;
+  late MovieBloc _movieBloc;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _movieBloc = MovieBloc(movieService: MovieService());
+  }
 
   final List<Widget> _screens = [
     HomeScreen(),
@@ -23,6 +33,11 @@ class _BottomNavigationState extends State<BottomNavigation> {
     setState(() {
       _currentIndex = index;
     });
+    if(_currentIndex == 0)
+    {
+      _movieBloc.add(FetchMovies());
+      
+    }
   }
   @override
   Widget build(BuildContext context) {

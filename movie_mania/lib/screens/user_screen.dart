@@ -10,6 +10,7 @@ import 'package:movie_mania/blocs/user/user_event.dart';
 import 'package:movie_mania/blocs/user/user_state.dart';
 import 'package:movie_mania/screens/favorite_screen.dart';
 import 'package:movie_mania/screens/language_change.dart';
+import 'package:movie_mania/screens/watch_list_screen.dart';
 import 'package:movie_mania/services/user_service.dart';
 
 class UserScreen extends StatefulWidget {
@@ -129,21 +130,21 @@ class _UserScreenState extends State<UserScreen> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => FavoritesScreen()));
+                                  builder: (context) => WatchListScreen()));
                         },
                       ),
-                      ListTile(
-                        leading: Text(
-                          'Langage Change',
-                          style: TextStyle(fontSize: 14),
-                        ),
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => LanguageChange()));
-                        },
-                      ),
+                      // ListTile(
+                      //   leading: Text(
+                      //     'Langage Change',
+                      //     style: TextStyle(fontSize: 14),
+                      //   ),
+                      //   onTap: () {
+                      //     Navigator.push(
+                      //         context,
+                      //         MaterialPageRoute(
+                      //             builder: (context) => LanguageChange()));
+                      //   },
+                      // ),
                     ],
                   );
                 } else if (state is UserError) {

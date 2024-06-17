@@ -6,6 +6,7 @@ import 'package:movie_mania/blocs/data/data_event.dart';
 import 'package:movie_mania/blocs/data/data_state.dart';
 import 'package:movie_mania/blocs/movie_bloc.dart';
 import 'package:movie_mania/blocs/search/search_bloc.dart';
+import 'package:movie_mania/constants/localizations.dart';
 import 'package:movie_mania/screens/movie_detail_screen.dart';
 import 'package:movie_mania/services/movie_service.dart';
 import 'package:movie_mania/services/user_service.dart';
@@ -65,7 +66,7 @@ class _SearchScreenState extends State<SearchScreen> {
         String? country = selectedCountry;
 
         return AlertDialog(
-          title: Text('Filter Search'),
+          title: Text('filter_search'),
           content: SingleChildScrollView(
             child: Container(
               width:MediaQuery.of(context).size.width * 0.8,

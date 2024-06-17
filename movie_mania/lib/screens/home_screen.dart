@@ -150,6 +150,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 }
               },
             ),
+            SizedBox(height: 10,),
             Expanded(child:
                 BlocBuilder<MovieBloc, MovieState>(builder: (context, state) {
               if (state is MovieLoading) {

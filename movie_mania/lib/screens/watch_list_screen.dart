@@ -15,13 +15,13 @@ class _WatchListScreenState extends State<WatchListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Favorite Movies'),
+        title: Text('Watch List'),
       ),
       body: BlocBuilder<WatchlistBloc, WatchlistState>(
         builder: (context, state) {
           if (state.watchlist.isEmpty) {
             return Center(
-              child: Text('No favorite movies added.'),
+              child: Text('No WatchList movies added.'),
             );
           }
 

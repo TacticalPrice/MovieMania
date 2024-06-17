@@ -20,8 +20,9 @@ class WatchlistBloc extends HydratedBloc<WatchlistEvent, WatchlistState> {
   }
 
   void _onRemoveFromWatchlist(RemoveFromWatchList event, Emitter<WatchlistState> emit) {
-    final updatedFavorites = List<dynamic>.from(state.watchlist)
-      ..remove(event.movie);
+    // final updatedFavorites = List<dynamic>.from(state.watchlist)
+    //   ..remove(event.movie);
+    final updatedFavorites = state.watchlist.where((movie) => movie['id'] != event.movie['id']).toList();
     emit(WatchlistState(watchlist: updatedFavorites));
   }
 

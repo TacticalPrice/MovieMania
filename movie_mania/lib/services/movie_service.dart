@@ -35,6 +35,7 @@ class MovieService {
         'language': language,
         'country': country,
         'type' : 'movie',
+        'language' : 'english',
         'offset' : offset,
         'limit' : limit,
       },

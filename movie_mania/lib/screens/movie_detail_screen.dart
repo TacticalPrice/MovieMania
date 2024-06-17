@@ -60,32 +60,31 @@ class _MovieDetailScreenState extends State<MovieDetailScreen>
       child: BlocBuilder<MovieDetailBloc, MovieDetailState>(
         builder: (context, state) {
           if (state is MovieDetailLoading) {
-               ThemeData theme = Theme.of(context);
+            ThemeData theme = Theme.of(context);
 
-                if (theme.brightness == Brightness.light) {
-                  return Scaffold(
-                    body: Center(
-                      child: Lottie.asset(
-                        "assets/loader.json",
-                        width: 100,
-                        height: 100,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  );
-                } 
-                else {
-                  return Scaffold(
-                    body: Center(
-                      child: Lottie.asset(
-                        "assets/loader2.json",
-                        width: 100,
-                        height: 100,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  );
-                }
+            if (theme.brightness == Brightness.light) {
+              return Scaffold(
+                body: Center(
+                  child: Lottie.asset(
+                    "assets/loader.json",
+                    width: 100,
+                    height: 100,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              );
+            } else {
+              return Scaffold(
+                body: Center(
+                  child: Lottie.asset(
+                    "assets/loader2.json",
+                    width: 100,
+                    height: 100,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              );
+            }
           } else if (state is MovieDetailLoaded) {
             final movieDetail = state.movieDetail;
             return Scaffold(
@@ -100,19 +99,20 @@ class _MovieDetailScreenState extends State<MovieDetailScreen>
                       child: Container(
                         height: 300,
                         width: 200,
-                        child:  ClipRRect(
-                      borderRadius:
-                          BorderRadius.vertical(top: Radius.circular(8) , bottom: Radius.circular(8)),
-                      child: CachedNetworkImage(
-                        imageUrl:
-                            movieDetail['image'],
-                        fit: BoxFit.cover,
-                        placeholder: (context, url) => Center(
-                          child: SizedBox(),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.vertical(
+                              top: Radius.circular(8),
+                              bottom: Radius.circular(8)),
+                          child: CachedNetworkImage(
+                            imageUrl: movieDetail['image'],
+                            fit: BoxFit.cover,
+                            placeholder: (context, url) => Center(
+                              child: SizedBox(),
+                            ),
+                            errorWidget: (context, url, error) =>
+                                Icon(Icons.error),
+                          ),
                         ),
-                        errorWidget: (context, url, error) => Icon(Icons.error),
-                      ),
-                    ),
                       ),
                     ),
                     Padding(
@@ -140,14 +140,12 @@ class _MovieDetailScreenState extends State<MovieDetailScreen>
                       children: [
                         BlocBuilder<FavoritesBloc, FavoritesState>(
                           builder: (context, favoritesState) {
-                        
-                        
                             bool isFavorite = false;
-                            for(var item in favoritesState.favorites){
-                              if(movieDetail['id'] == item['id']){
+                            for (var item in favoritesState.favorites) {
+                              if (movieDetail['id'] == item['id']) {
                                 isFavorite = true;
+                                break;
                               }
-                        
                             }
                             return IconButton(
                               icon: Icon(
@@ -161,30 +159,30 @@ class _MovieDetailScreenState extends State<MovieDetailScreen>
                                   context
                                       .read<FavoritesBloc>()
                                       .add(RemoveFromFavorites(movieDetail));
-                                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text('Removed From Favorites')));
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                          content:
+                                              Text('Removed From Favorites')));
                                 } else {
                                   context
                                       .read<FavoritesBloc>()
                                       .add(AddToFavorites(movieDetail));
-                                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text('Added to Favorites')));
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                          content: Text('Added to Favorites')));
                                 }
                               },
                             );
                           },
                         ),
-
                         BlocBuilder<WatchlistBloc, WatchlistState>(
                           builder: (context, watchlistState) {
-                        
-                        
                             bool isFavorite = false;
-                            for(var item in watchlistState.watchlist){
-                              if(movieDetail['id'] == item['id']){
+                            for (var item in watchlistState.watchlist) {
+                              if (movieDetail['id'] == item['id']) {
                                 isFavorite = true;
+                                break;
                               }
-                        
                             }
                             return IconButton(
                               icon: Icon(
@@ -198,14 +196,17 @@ class _MovieDetailScreenState extends State<MovieDetailScreen>
                                   context
                                       .read<WatchlistBloc>()
                                       .add(RemoveFromWatchList(movieDetail));
-                                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text('Removed From WatchList')));
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                          content:
+                                              Text('Removed From WatchList')));
                                 } else {
                                   context
                                       .read<WatchlistBloc>()
                                       .add(AddToWatchList(movieDetail));
-                                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text('Added to WatchList')));
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                          content: Text('Added to WatchList')));
                                 }
                               },
                             );
@@ -213,16 +214,16 @@ class _MovieDetailScreenState extends State<MovieDetailScreen>
                         ),
                       ],
                     ),
-                    SizedBox(height: 20,),
-                    
+                    SizedBox(
+                      height: 20,
+                    ),
                     Column(
                       children: [
                         TabBar(
                           controller: _tabController,
                           tabs: [
                             Tab(text: 'General'),
-                            Container(
-                              child: Tab(text: 'Cast & Crew')),
+                            Container(child: Tab(text: 'Cast & Crew')),
                             Tab(text: 'Artworks'),
                           ],
                         ),
@@ -249,7 +250,6 @@ class _MovieDetailScreenState extends State<MovieDetailScreen>
                 ),
               ),
             );
-
           } else if (state is MovieDetailError) {
             print(state.message);
             return Center(child: Text(state.message));

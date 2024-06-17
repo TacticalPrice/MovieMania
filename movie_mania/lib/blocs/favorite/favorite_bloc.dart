@@ -18,8 +18,9 @@ class FavoritesBloc extends HydratedBloc<FavoritesEvent, FavoritesState> {
   }
 
   void _onRemoveFromFavorites(RemoveFromFavorites event, Emitter<FavoritesState> emit) {
-    final updatedFavorites = List<dynamic>.from(state.favorites)
-      ..remove(event.movie);
+    // final updatedFavorites = List<dynamic>.from(state.favorites)
+    //   ..remove(event.movie);
+    final updatedFavorites = state.favorites.where((movie) => movie['id'] != event.movie['id']).toList();
     emit(FavoritesState(favorites: updatedFavorites));
   }
 
