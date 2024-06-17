@@ -52,7 +52,7 @@ class _SplashScreenState extends State<SplashScreen> {
               );
             }
           } else {
-            return Center(child: Text('Fetching Authentication Token...'));
+            return Center(child: Image.asset('assets/popcorn.png'));
           }
         },
       ),

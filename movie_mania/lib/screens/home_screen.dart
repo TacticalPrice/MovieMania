@@ -76,7 +76,7 @@ class _HomeScreenState extends State<HomeScreen> {
         leading: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Container(
-              height: 50, width: 50, child: Image.asset('assets/Icon_2.png')),
+              height: 50, width: 50, child: Image.asset('assets/popcorn.png')),
         ),
         centerTitle: true,
       ),
