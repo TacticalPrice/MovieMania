@@ -11,47 +11,61 @@ class WatchListScreen extends StatefulWidget {
 }
 
 class _WatchListScreenState extends State<WatchListScreen> {
+  late WatchlistBloc _watchlistBloc;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _watchlistBloc = WatchlistBloc();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Watch List'),
       ),
-      body: BlocBuilder<WatchlistBloc, WatchlistState>(
-        builder: (context, state) {
-          if (state.watchlist.isEmpty) {
-            return Center(
-              child: Text('No WatchList movies added.'),
-            );
-          }
-
-          return ListView.builder(
-            itemCount: state.watchlist.length,
-            itemBuilder: (context, index) {
-              final movie = state.watchlist[index];
-              return Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Container(
-                  height: 100,
-                  child: Row(
-                    children: [
-                      Image.network(movie['image']),
-                      SizedBox(width: 10,),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(movie['name']),
-                          Text(movie['year']),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
+      body: BlocProvider(
+        create: (context) => _watchlistBloc,
+        child: BlocBuilder<WatchlistBloc, WatchlistState>(
+          builder: (context, state) {
+            if (state.watchlist.isEmpty) {
+              return Center(
+                child: Text('No WatchList movies added.'),
               );
-            },
-          );
-        },
+            }
+
+            return ListView.builder(
+              itemCount: state.watchlist.length,
+              itemBuilder: (context, index) {
+                final movie = state.watchlist[index];
+                return Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Container(
+                    height: 100,
+                    child: Row(
+                      children: [
+                        Image.network(movie['image']),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(movie['name']),
+                            Text(movie['year']),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            );
+          },
+        ),
       ),
     );
   }

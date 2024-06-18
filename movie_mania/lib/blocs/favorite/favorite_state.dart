@@ -2,7 +2,7 @@
 import 'package:equatable/equatable.dart';
 
 class FavoritesState extends Equatable {
-  final List<dynamic> favorites;
+  final List<Map<String, dynamic>> favorites;
 
   const FavoritesState({required this.favorites});
 

@@ -5,8 +5,11 @@ abstract class MovieSearchEvent {}
 
 class PerformSearch extends MovieSearchEvent {
   final String query;
+  final String language;
+  final String country;
+  final int page;
 
-  PerformSearch(this.query);
+  PerformSearch(this.language, this.country, {required this.query, required this.page});
 }
 
 class ShowFilterDialog extends MovieSearchEvent {
@@ -43,4 +46,7 @@ class ChangeCountry extends MovieSearchEvent {
 class LoadMoreResults extends MovieSearchEvent {
   final String query;
   LoadMoreResults(this.query);
+
+   @override
+  List<Object> get props => [query];
 }

@@ -12,7 +12,7 @@ class FavoritesBloc extends HydratedBloc<FavoritesEvent, FavoritesState> {
   }
 
   void _onAddToFavorites(AddToFavorites event, Emitter<FavoritesState> emit) {
-    final updatedFavorites = List<dynamic>.from(state.favorites)
+    final updatedFavorites = List<Map<String, dynamic>>.from(state.favorites)
       ..add(event.movie);
     emit(FavoritesState(favorites: updatedFavorites));
   }
@@ -26,7 +26,7 @@ class FavoritesBloc extends HydratedBloc<FavoritesEvent, FavoritesState> {
 
   @override
   FavoritesState fromJson(Map<String, dynamic> json) {
-    final favorites = List<dynamic>.from(json['favorites']);
+    final favorites = List<Map<String,dynamic>>.from(json['favorites']);
     return FavoritesState(favorites: favorites);
   }
 

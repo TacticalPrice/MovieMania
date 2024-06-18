@@ -13,7 +13,7 @@ class MovieSearchBloc extends Bloc<MovieSearchEvent, MovieSearchState> {
   String? currentQuery = '';
   int currentPage = 0;
   bool isLoadingMore = false;
-  bool hasReachedEnd = false;
+  final int searchPerPage = 10;
 
   MovieSearchBloc({required this.movieService}) : super(MovieStartInitial()) {
     on<PerformSearch>(_onPerformSearch);
@@ -32,8 +32,13 @@ class MovieSearchBloc extends Bloc<MovieSearchEvent, MovieSearchState> {
         selectedLanguage ?? '',
         selectedCountry ?? '',
         0,
-        10,);
-      emit(MovieSearchLoaded(searchResult, event.query, searchResult.isEmpty));
+        searchPerPage,);
+        final hasReachedEnd = searchResult.length < searchPerPage;
+      emit(MovieSearchLoaded(
+        event.page == 1 ? searchResult : (state as MovieSearchLoaded).searchResult + searchResult,
+        event.query,
+        hasReachedEnd,
+      ));
     } catch (e) {
       emit(MovieSearchError(message: e.toString()));
       print(e.toString());
@@ -57,6 +62,8 @@ class MovieSearchBloc extends Bloc<MovieSearchEvent, MovieSearchState> {
         selectedCountry ?? '',
         0,
         10,);
+        
+      
       emit(MovieSearchLoaded(searchResult, event.query,searchResult.isEmpty));
     } catch (e) {
       emit(MovieSearchError(message: e.toString()));
@@ -72,44 +79,55 @@ class MovieSearchBloc extends Bloc<MovieSearchEvent, MovieSearchState> {
   }
 
   void _onLoadMoreResults(LoadMoreResults event , Emitter<MovieSearchState> emit) async {
-   if (isLoadingMore || hasReachedEnd) return;
+   if(isLoadingMore) return;
 
     isLoadingMore = true;
+    final currentState = state;
+    if(currentState is MovieSearchLoaded && !currentState.hasReachedEnd){
     try {
       final int nextPage = currentPage +1;
       final newSearchResult = await movieService.searchMovies(
         event.query,
         selectedLanguage ?? '',
         selectedCountry ?? '',
-        nextPage*10,
-        30,
+        nextPage,
+        searchPerPage,
       );
 
-      if (newSearchResult.isEmpty) {
-        hasReachedEnd = true;
-      }else{
+      final hasReachedEnd = newSearchResult.length < searchPerPage;
+        emit(MovieSearchLoaded(
+          currentState.searchResult + newSearchResult,
+          event.query,
+          hasReachedEnd,
+        ));
         currentPage = nextPage;
+
+      // if (newSearchResult.isEmpty) {
+      //   hasReachedEnd = true;
+      // }else{
+      //   currentPage = nextPage;
       
 
-      if (state is MovieSearchLoaded) {
-        final currentState = state as MovieSearchLoaded;
-        final List<dynamic> updatedResults = List.from(currentState.searchResult)..addAll(newSearchResult);
-        final uniqueResults = updatedResults.toSet().toList();
+      // if (state is MovieSearchLoaded) {
+      //   final currentState = state as MovieSearchLoaded;
+      //   final List<dynamic> updatedResults = List.from(currentState.searchResult)..addAll(newSearchResult);
+      //   final uniqueResults = updatedResults.toSet().toList();
 
-         if (updatedResults == uniqueResults) {
-          hasReachedEnd = true;
-          emit(MovieSearchLoaded([], event.query, true)); // Empty result example
-        } else {
-          emit(MovieSearchLoaded(uniqueResults, event.query, hasReachedEnd));
-        }
-      }
-      }
+      //    if (updatedResults == uniqueResults) {
+      //     hasReachedEnd = true;
+      //     emit(MovieSearchLoaded([], event.query, true)); // Empty result example
+      //   } else {
+      //     emit(MovieSearchLoaded(uniqueResults, event.query, hasReachedEnd));
+      //   }
+      // }
+      // }
     } catch (e) {
       emit(MovieSearchError(message: e.toString()));
       print(e.toString());
     }
     isLoadingMore = false;
   }
+}
 
   }
 

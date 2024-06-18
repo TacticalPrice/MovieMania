@@ -120,11 +120,12 @@ class _SearchScreenState extends State<SearchScreen> {
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
-                _movieSearchBloc.add(ApplyFilters(
-                  _searchController.text,
-                  language,
-                  country,
-                ));
+                _movieSearchBloc.add(PerformSearch(query: _searchController.text, page: 1 , language! , country!));
+                // _movieSearchBloc.add(ApplyFilters(
+                //   _searchController.text,
+                //   language,
+                //   country,
+                // ));
                 if (_searchController.text.isEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                     content: Text('Please Enter Text in the Search Field'),
@@ -172,7 +173,7 @@ class _SearchScreenState extends State<SearchScreen> {
                           suffixIcon: IconButton(
                             onPressed: () {
                               final query = _searchController.text;
-                              _movieSearchBloc.add(PerformSearch(query));
+                              _movieSearchBloc.add(PerformSearch(page:1,query : query , '' , ''));
                             },
                             icon: Icon(Icons.search),
                           ),
@@ -194,7 +195,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 Expanded(
                   child: BlocBuilder<MovieSearchBloc, MovieSearchState>(
                       builder: (context, state) {
-                    if (state is MovieSearchLoading) {
+                    if (state is MovieSearchLoading && _movieSearchBloc.currentPage == 0) {
                       ThemeData theme = Theme.of(context);
 
                       if (theme.brightness == Brightness.light) {
